@@ -32,6 +32,7 @@ const getRating = async (req, res) => {
   return res.status(200).send({ rating });
 };
 
+// TODO: some middleware to check if image contains a virus
 const setRating = async (req, res) => {
   const { rating, date } = req.body;
   console.log(rating);

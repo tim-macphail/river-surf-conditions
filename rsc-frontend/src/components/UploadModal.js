@@ -22,9 +22,10 @@ export default function UploadModal(props) {
 
   // select a file from the file system
   const fileSelectedHandler = (event) => {
-    console.log(event.target.files);
     const file = event.target.files[0];
-    const photoDate = file.lastModifiedDate;
+    const dateStr = file.lastModifiedDate.toISOString().split(":");
+    const photoDate = `${dateStr[0]}:${dateStr[1]}`;
+    console.log(photoDate);
     setPhotoDate(photoDate);
     setSelectedFile(file);
     setImageURL(URL.createObjectURL(file));
@@ -49,7 +50,6 @@ export default function UploadModal(props) {
     /*
       for now we just post a rating of 4 into the db
     */
-    console.log(userRating);
     const reqBody = { rating: userRating, date: photoDate };
 
     try {
@@ -82,32 +82,20 @@ export default function UploadModal(props) {
   return (
     <Modal open={props.open}>
       <Box sx={popupStyle} alignItems="center">
-        <img src={imageURL} style={{ maxHeight: "40%" }} alt="uploaded" />
+        {selectedFile && (
+          <img src={imageURL} style={{ maxHeight: "40%" }} alt="uploaded" />
+        )}
         {/* <Button variant="contained" color="secondary" onClick={() => setToastOpen(true)}>[DEV] open toast</Button><Button variant="contained" color="secondary" onClick={async () => { try { await axios.post("/clearDB"); } catch (error) { console.log("Error clearing DB" + error); } }} > [DEV] clear db </Button> */}
-        <Input
-          type="date"
-          value={photoDate && photoDate.toLocaleDateString("en-CA")} //! may cause issues in other regions ?
-          readOnly
-          // onChange={(e) => console.log(e.target.valueAsDate)}
-          // value={null}
-        />
-        <input
-          type="time"
-          value={
-            photoDate &&
-            photoDate.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: false,
-            })
-          }
-          // readOnly
-          // hidden
-          // onChange={(e) => console.log(e.target.value)}
-        />
         <Typography mt={2} component="legend">
           Rating
         </Typography>
+        <Input
+          type="datetime-local"
+          onChange={(e) => console.log(e.target.value)}
+          // min={} // TODO: get these from what's available
+          // max={}
+          value={photoDate}
+        />
         <Rating
           name="simple-controlled"
           value={userRating}
