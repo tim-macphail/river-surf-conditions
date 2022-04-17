@@ -1,20 +1,24 @@
 import {
   Modal,
+  Alert,
   Box,
   Button,
   Input,
   Rating,
   Typography,
   Grid,
+  Snackbar,
 } from "@mui/material";
 
 import { useState } from "react";
 import axios from "axios";
 
-export default function MyModal(props) {
+export default function UploadModal(props) {
   const [selectedFile, setSelectedFile] = useState();
   const [photoDate, setPhotoDate] = useState();
   const [userRating, setUserRating] = useState(0);
+  const [toastOpen, setToastOpen] = useState(false);
+  const [imageURL, setImageURL] = useState();
 
   // select a file from the file system
   const fileSelectedHandler = (event) => {
@@ -23,6 +27,7 @@ export default function MyModal(props) {
     const photoDate = file.lastModifiedDate;
     setPhotoDate(photoDate);
     setSelectedFile(file);
+    setImageURL(URL.createObjectURL(file));
   };
 
   // upload the selected file to the db
@@ -51,6 +56,8 @@ export default function MyModal(props) {
       await axios.post("/setRating", reqBody);
       setSelectedFile(null);
       setUserRating(0);
+      setToastOpen(true);
+      setPhotoDate(null);
     } catch (error) {
       console.log("Error adding rating " + error);
     }
@@ -64,7 +71,6 @@ export default function MyModal(props) {
     width: "50%",
     height: "70%",
     bgcolor: "background.paper",
-    border: "2px solid #000",
     borderRadius: 10,
     boxShadow: 24,
     p: 4,
@@ -72,10 +78,12 @@ export default function MyModal(props) {
     justifyContent: "flex-end",
     flexDirection: "column",
   };
+
   return (
     <Modal open={props.open}>
       <Box sx={popupStyle} alignItems="center">
-        {/* <Typography variant="h4">Date: {photoDate}</Typography> */}
+        <img src={imageURL} style={{ maxHeight: "40%" }} alt="uploaded" />
+        {/* <Button variant="contained" color="secondary" onClick={() => setToastOpen(true)}>[DEV] open toast</Button><Button variant="contained" color="secondary" onClick={async () => { try { await axios.post("/clearDB"); } catch (error) { console.log("Error clearing DB" + error); } }} > [DEV] clear db </Button> */}
         <Input
           type="date"
           value={photoDate && photoDate.toLocaleDateString("en-CA")} //! may cause issues in other regions ?
@@ -83,7 +91,7 @@ export default function MyModal(props) {
           // onChange={(e) => console.log(e.target.valueAsDate)}
           // value={null}
         />
-        <Input
+        <input
           type="time"
           value={
             photoDate &&
@@ -93,7 +101,8 @@ export default function MyModal(props) {
               hour12: false,
             })
           }
-          readOnly
+          // readOnly
+          // hidden
           // onChange={(e) => console.log(e.target.value)}
         />
         <Typography mt={2} component="legend">
@@ -122,7 +131,7 @@ export default function MyModal(props) {
         {selectedFile && selectedFile.name}
         <Grid container spacing={2}>
           <Grid item sm={6}>
-            <Button onClick={props.submit} color="warning">
+            <Button onClick={props.close} color="warning">
               close
             </Button>
           </Grid>
@@ -136,6 +145,24 @@ export default function MyModal(props) {
             </Button>
           </Grid>
         </Grid>
+        <Snackbar
+          open={toastOpen}
+          autoHideDuration={3000}
+          onClose={() => {
+            setToastOpen(false);
+          }}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          // key={"bottom" + "center"}
+        >
+          <Alert
+            severity="success"
+            sx={{ width: "100%" }}
+            elevation={6}
+            variant="filled"
+          >
+            Image uploaded successfully
+          </Alert>
+        </Snackbar>
       </Box>
     </Modal>
   );

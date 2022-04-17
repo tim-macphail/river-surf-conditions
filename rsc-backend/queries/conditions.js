@@ -15,15 +15,15 @@ const getBowRiverData = (req, res) => {
   );
 };
 
+// !Testing
 const clearDB = async (req, res) => {
   const rating = 4.2345; // TODO: hardcoded
-  // !Testing
   try {
     const db = mongoClient.db("sample_rsc");
     await db.collection("sample_ratings").deleteMany({});
-    console.log("deleted many");
+    console.log("Successfully cleared DB");
   } catch (error) {
-    console.log(error);
+    console.log("Error clearing db" + error);
   }
 };
 

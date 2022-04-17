@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { Button, CircularProgress, Rating, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import MyModal from "./MyModal";
+import UploadModal from "./UploadModal";
 const axios = require("axios");
 
-export default function MyComponent() {
+export default function LiveConditions() {
   const [conditions, setConditions] = useState({
     time: 0,
     waterLevel: 0,
@@ -85,7 +85,7 @@ export default function MyComponent() {
       <Button variant="outlined" onClick={() => setPopup(!popup)}>
         Upload
       </Button>
-      {popup && <MyModal open={popup} submit={() => setPopup(false)} />}
+      {popup && <UploadModal open={popup} close={() => setPopup(false)} />}
     </>
   );
 }

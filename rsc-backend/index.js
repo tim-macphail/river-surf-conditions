@@ -30,6 +30,7 @@ app.get("/bowRiverData", conditions.getBowRiverData);
 app.get("/rating", conditions.getRating);
 
 app.post("/setRating", conditions.setRating);
+app.post("/clearDB", conditions.clearDB);
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);
