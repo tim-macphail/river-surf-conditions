@@ -1,4 +1,12 @@
-import { Modal, Box, Button, Input, Rating, Typography } from "@mui/material";
+import {
+  Modal,
+  Box,
+  Button,
+  Input,
+  Rating,
+  Typography,
+  Grid,
+} from "@mui/material";
 
 import { useState } from "react";
 import axios from "axios";
@@ -11,16 +19,7 @@ export default function MyModal(props) {
   // select a file from the file system
   const fileSelectedHandler = (event) => {
     console.log(event.target.files);
-    // TODO: find some way to have this restricted already
-    if (event.target.files.length !== 1) {
-      alert("Upload on only 1 file");
-      return;
-    }
     const file = event.target.files[0];
-    if (file.type !== "image/jpeg") {
-      alert("Only enter a photo");
-      return;
-    }
     const photoDate = file.lastModifiedDate;
     setPhotoDate(photoDate);
     setSelectedFile(file);
@@ -47,11 +46,11 @@ export default function MyModal(props) {
     */
     console.log(userRating);
     const reqBody = { rating: userRating, date: photoDate };
+
     try {
-      const response = await axios.post("/setRating", reqBody);
+      await axios.post("/setRating", reqBody);
       setSelectedFile(null);
       setUserRating(0);
-      console.log(userRating);
     } catch (error) {
       console.log("Error adding rating " + error);
     }
@@ -108,23 +107,35 @@ export default function MyModal(props) {
             setUserRating(newValue);
           }}
           sx={{ mb: 2 }}
+          readOnly={!selectedFile}
         />
-        {userRating}
-        <Input
-          type="file"
-          // style={{ display: "none" }}	// hide this input later?
-          onChange={fileSelectedHandler}
-          sx={{ mb: 2 }}
-        />
-        <Button
-          onClick={fileUploadHandler}
-          disabled={!selectedFile && userRating}
-        >
-          Submit
+        {userRating}/5
+        <Button component="label">
+          {selectedFile ? "Change file" : "upload file"}
+          <input
+            onChange={fileSelectedHandler}
+            type="file"
+            accept="image/*"
+            hidden
+          />
         </Button>
-        <Button onClick={props.submit} color="warning">
-          close
-        </Button>
+        {selectedFile && selectedFile.name}
+        <Grid container spacing={2}>
+          <Grid item sm={6}>
+            <Button onClick={props.submit} color="warning">
+              close
+            </Button>
+          </Grid>
+          <Grid item sm={6} container justifyContent="flex-end">
+            <Button
+              onClick={fileUploadHandler}
+              disabled={!selectedFile || !userRating}
+              variant="outlined"
+            >
+              Submit
+            </Button>
+          </Grid>
+        </Grid>
       </Box>
     </Modal>
   );

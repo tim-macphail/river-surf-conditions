@@ -15,8 +15,20 @@ const getBowRiverData = (req, res) => {
   );
 };
 
-const getRating = (req, res) => {
-  const rating = 4; // TODO: hardcoded
+const clearDB = async (req, res) => {
+  const rating = 4.2345; // TODO: hardcoded
+  // !Testing
+  try {
+    const db = mongoClient.db("sample_rsc");
+    await db.collection("sample_ratings").deleteMany({});
+    console.log("deleted many");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getRating = async (req, res) => {
+  const rating = 4.2345; // TODO: hardcoded
   return res.status(200).send({ rating });
 };
 
@@ -31,14 +43,14 @@ const setRating = async (req, res) => {
       date: date,
     });
   } catch (error) {
-    return response.status(500).send("Error occured when adding rating");
+    return res.status(500).send("Error occured when adding rating");
   }
-  console.log(`add rating for ${rating}, ${date} successful`);
-  return response.status(200).send("Successfully added rating");
+  return res.status(200).send("Successfully added rating");
 };
 
 module.exports = {
   getBowRiverData,
   getRating,
   setRating,
+  clearDB,
 };

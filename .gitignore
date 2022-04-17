@@ -30,3 +30,4 @@ env
 
 /rsc-backend/.env
 /rsc-frontend/.env
+*.un~

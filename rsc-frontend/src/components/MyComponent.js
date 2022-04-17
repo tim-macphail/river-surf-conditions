@@ -75,7 +75,7 @@ export default function MyComponent() {
           </Typography>
           <Rating
             value={rating}
-            precision={0.5}
+            precision={0.1}
             size="large"
             sx={{ fontSize: "4rem" }}
             readOnly
