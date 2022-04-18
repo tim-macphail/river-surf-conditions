@@ -74,15 +74,13 @@ export default function UploadModal(props) {
     });
     fd.append("date", photoDate);
     fd.append("userRating", userRating);
-    const reqBody = { fd: fd };
-    console.log(fd);
     try {
       setUploading(true);
       await axios.post("/uploadPhoto", fd);
-      // setSelectedFile(null);
-      // setUserRating(0);
+      setSelectedFile(null);
+      setUserRating(0);
       setToastOpen(true);
-      // setPhotoDate(null);
+      setPhotoDate(null);
       setUploading(false);
     } catch (error) {
       console.log("Error uploading photo " + error);
@@ -174,10 +172,7 @@ export default function UploadModal(props) {
           <Grid item sm={6} container justifyContent="flex-end">
             <Button
               onClick={fileUploadHandler}
-              disabled={
-                !selectedFile || !ratingGiven
-                // !selectedFile || !userRating || uploading || !ratingGiven
-              }
+              disabled={!selectedFile || !ratingGiven || uploading}
               variant="outlined"
             >
               Submit

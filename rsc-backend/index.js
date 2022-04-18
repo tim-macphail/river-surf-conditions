@@ -5,7 +5,30 @@ const conditions = require("./queries/conditions");
 const path = require("path");
 const mongoose = require("mongoose");
 const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "./uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + file.originalname);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  // reject a file
+  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png")
+    cb(null, false);
+  else cb(new Error("File not of correct type"), true);
+};
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 5,
+  },
+  // fileFilter: fileFilter,
+});
 
 const app = express();
 const port = process.env.PORT || 3001;
