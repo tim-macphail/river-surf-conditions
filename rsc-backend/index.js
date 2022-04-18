@@ -29,7 +29,8 @@ app.get("/", (req, res) => {
 app.get("/bowRiverData", conditions.getBowRiverData);
 app.get("/rating", conditions.getRating);
 
-app.post("/setRating", conditions.setRating);
+app.post("/findNearest", conditions.findNearest);
+app.post("/uploadPhoto", conditions.uploadPhoto);
 app.post("/clearDB", conditions.clearDB);
 
 app.listen(port, () => {

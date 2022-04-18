@@ -19,16 +19,36 @@ export default function UploadModal(props) {
   const [userRating, setUserRating] = useState(0);
   const [toastOpen, setToastOpen] = useState(false);
   const [imageURL, setImageURL] = useState();
+  const [uploading, setUploading] = useState(false);
+  const [closestEntry, setClosestEntry] = useState({
+    waterLevel: 1.69,
+    flow: 69.69,
+  });
 
   // select a file from the file system
   const fileSelectedHandler = (event) => {
     const file = event.target.files[0];
-    const dateStr = file.lastModifiedDate.toISOString().split(":");
-    const photoDate = `${dateStr[0]}:${dateStr[1]}`;
-    console.log(photoDate);
+    let adjustedDate = file.lastModifiedDate;
+    adjustedDate.setHours(adjustedDate.getHours() - 6);
+    const dateStr = adjustedDate.toISOString();
+    const photoDate = dateStr.slice(0, dateStr.lastIndexOf(":"));
     setPhotoDate(photoDate);
     setSelectedFile(file);
     setImageURL(URL.createObjectURL(file));
+
+    findNearest(photoDate);
+  };
+
+  const findNearest = async (dateStr) => {
+    const reqBody = {
+      dateStr: dateStr,
+    };
+    try {
+      const response = await axios.post("/findNearest", reqBody);
+      setClosestEntry(response.data);
+    } catch (error) {
+      console.log("Error finding nearest: " + error);
+    }
   };
 
   // upload the selected file to the db
@@ -53,15 +73,29 @@ export default function UploadModal(props) {
     const reqBody = { rating: userRating, date: photoDate };
 
     try {
-      await axios.post("/setRating", reqBody);
+      setUploading(true);
+      await axios.post("/uploadPhoto", reqBody);
       setSelectedFile(null);
       setUserRating(0);
       setToastOpen(true);
       setPhotoDate(null);
+      setUploading(false);
     } catch (error) {
-      console.log("Error adding rating " + error);
+      console.log("Error uploading photo " + error);
     }
   };
+
+  const stringify = (date) => {
+    // Adjust for UTC conversion
+    let adjustedDate = date;
+    adjustedDate.setHours(adjustedDate.getHours() - 6); // depends on daylight saving time?
+    let dateStr = adjustedDate.toISOString();
+    dateStr = dateStr.slice(0, dateStr.lastIndexOf(":"));
+    return dateStr;
+  };
+
+  const oldest = stringify(new Date(props.oldestEntry));
+  const today = stringify(new Date());
 
   const popupStyle = {
     position: "absolute",
@@ -83,19 +117,24 @@ export default function UploadModal(props) {
     <Modal open={props.open}>
       <Box sx={popupStyle} alignItems="center">
         {selectedFile && (
-          <img src={imageURL} style={{ maxHeight: "40%" }} alt="uploaded" />
+          <>
+            <img src={imageURL} style={{ maxHeight: "40%" }} alt="uploaded" />
+            <Typography variant="caption">
+              Flow: {closestEntry.flow}, water level: {closestEntry.waterLevel}
+            </Typography>
+          </>
         )}
         {/* <Button variant="contained" color="secondary" onClick={() => setToastOpen(true)}>[DEV] open toast</Button><Button variant="contained" color="secondary" onClick={async () => { try { await axios.post("/clearDB"); } catch (error) { console.log("Error clearing DB" + error); } }} > [DEV] clear db </Button> */}
+        <Input
+          type="datetime-local"
+          onChange={(e) => setPhotoDate(e.target.value)}
+          inputProps={{ max: `${today}`, min: `${oldest}` }} // TODO: time max not applying, see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local#validation about validation
+          value={photoDate}
+          readOnly={!selectedFile}
+        />
         <Typography mt={2} component="legend">
           Rating
         </Typography>
-        <Input
-          type="datetime-local"
-          onChange={(e) => console.log(e.target.value)}
-          // min={} // TODO: get these from what's available
-          // max={}
-          value={photoDate}
-        />
         <Rating
           name="simple-controlled"
           value={userRating}
@@ -103,7 +142,6 @@ export default function UploadModal(props) {
           onChange={(event, newValue) => {
             setUserRating(newValue);
           }}
-          sx={{ mb: 2 }}
           readOnly={!selectedFile}
         />
         {userRating}/5
@@ -126,13 +164,14 @@ export default function UploadModal(props) {
           <Grid item sm={6} container justifyContent="flex-end">
             <Button
               onClick={fileUploadHandler}
-              disabled={!selectedFile || !userRating}
+              disabled={!selectedFile || !userRating || uploading}
               variant="outlined"
             >
               Submit
             </Button>
           </Grid>
         </Grid>
+        <button onClick={() => findNearest(photoDate)}>find nearest</button>
         <Snackbar
           open={toastOpen}
           autoHideDuration={3000}

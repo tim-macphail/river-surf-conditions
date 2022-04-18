@@ -13,6 +13,7 @@ export default function LiveConditions() {
   const [rating, setRating] = useState(0);
   const [loading, setLoading] = useState(true);
   const [popup, setPopup] = useState(false);
+  const [oldestEntry, setOldestEntry] = useState();
 
   const getRiverData = async () => {
     setLoading(true);
@@ -35,6 +36,7 @@ export default function LiveConditions() {
         flow: 91.3574543, // TODO: hardcoded
       });
       setLoading(false);
+      setOldestEntry(response.data.entries[0][0]);
     } catch (error) {
       console.log(error);
       setConditions("Error");
@@ -85,7 +87,13 @@ export default function LiveConditions() {
       <Button variant="outlined" onClick={() => setPopup(!popup)}>
         Upload
       </Button>
-      {popup && <UploadModal open={popup} close={() => setPopup(false)} />}
+      {popup && (
+        <UploadModal
+          open={popup}
+          close={() => setPopup(false)}
+          oldestEntry={oldestEntry}
+        />
+      )}
     </>
   );
 }
