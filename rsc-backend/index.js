@@ -3,6 +3,9 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const conditions = require("./queries/conditions");
 const path = require("path");
+const mongoose = require("mongoose");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -30,8 +33,9 @@ app.get("/bowRiverData", conditions.getBowRiverData);
 app.get("/rating", conditions.getRating);
 
 app.post("/findNearest", conditions.findNearest);
-app.post("/uploadPhoto", conditions.uploadPhoto);
 app.post("/clearDB", conditions.clearDB);
+
+app.post("/uploadPhoto", upload.single("image"), conditions.uploadPhoto);
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);

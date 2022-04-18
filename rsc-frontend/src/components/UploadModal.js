@@ -47,7 +47,6 @@ export default function UploadModal(props) {
     };
     try {
       const response = await axios.post("/findNearest", reqBody);
-      console.log("Response: " + response.data.closestEntry);
       const [time, waterLevel, flow] = response.data.closestEntry;
 
       setClosestEntry({
@@ -63,34 +62,31 @@ export default function UploadModal(props) {
   // upload the selected file to the db
 
   const fileUploadHandler = async () => {
-    // const fd = new FormData();
-    // fd.append("image", selectedFile, selectedFile.name, {
-    //   onUploadProgress: (progressEvent) => {
-    //     console.log(
-    //       "Upload Progress: " +
-    //         Math.round((progressEvent.loaded / progressEvent.total) * 100) +
-    //         "%"
-    //     );
-    //   },
-    // });
-    // fd.append("date", photoDate);
-    // fd.append("userRating", userRating);
-    // axios.post("/uploadImage", fd);
-    /*
-      for now we just post a rating of 4 into the db
-    */
-    const reqBody = { rating: userRating, date: photoDate };
-
+    const fd = new FormData();
+    fd.append("image", selectedFile, selectedFile.name, {
+      onUploadProgress: (progressEvent) => {
+        console.log(
+          "Upload Progress: " +
+            Math.round((progressEvent.loaded / progressEvent.total) * 100) +
+            "%"
+        );
+      },
+    });
+    fd.append("date", photoDate);
+    fd.append("userRating", userRating);
+    const reqBody = { fd: fd };
+    console.log(fd);
     try {
       setUploading(true);
-      await axios.post("/uploadPhoto", reqBody);
-      setSelectedFile(null);
-      setUserRating(0);
+      await axios.post("/uploadPhoto", fd);
+      // setSelectedFile(null);
+      // setUserRating(0);
       setToastOpen(true);
-      setPhotoDate(null);
+      // setPhotoDate(null);
       setUploading(false);
     } catch (error) {
       console.log("Error uploading photo " + error);
+      setUploading(false);
     }
   };
 
@@ -179,7 +175,8 @@ export default function UploadModal(props) {
             <Button
               onClick={fileUploadHandler}
               disabled={
-                !selectedFile || !userRating || uploading || !ratingGiven
+                !selectedFile || !ratingGiven
+                // !selectedFile || !userRating || uploading || !ratingGiven
               }
               variant="outlined"
             >

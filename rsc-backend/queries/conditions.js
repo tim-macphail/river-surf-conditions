@@ -49,6 +49,12 @@ const getRating = async (req, res) => {
 
 // TODO: some middleware to check if image contains a virus
 const uploadPhoto = async (req, res) => {
+  // New
+  console.log(req.file);
+  return res.status(500).send("Error occured when uploading photo");
+  return;
+
+  // Old
   const { rating, date } = req.body;
   try {
     const db = mongoClient.db("sample_rsc");
