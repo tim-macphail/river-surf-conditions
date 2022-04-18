@@ -1,0 +1,4 @@
+- [ ] break into smaller components
+- [ ] change logo from default react one
+- [ ] refresh button on main page look better
+- [ ] escape key close modal

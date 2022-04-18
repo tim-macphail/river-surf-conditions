@@ -20,6 +20,7 @@ export default function UploadModal(props) {
   const [toastOpen, setToastOpen] = useState(false);
   const [imageURL, setImageURL] = useState();
   const [uploading, setUploading] = useState(false);
+  const [ratingGiven, setRatingGiven] = useState(false);
   const [closestEntry, setClosestEntry] = useState({
     time: new Date(),
     waterLevel: 1.69,
@@ -125,13 +126,7 @@ export default function UploadModal(props) {
     <Modal open={props.open}>
       <Box sx={popupStyle} alignItems="center">
         {selectedFile && (
-          <>
-            <img src={imageURL} style={{ maxHeight: "40%" }} alt="uploaded" />
-            <Typography variant="caption">
-              Flow: {closestEntry.flow}, water level:{" "}
-              {closestEntry.waterLevel.toFixed(2)}
-            </Typography>
-          </>
+          <img src={imageURL} style={{ maxHeight: "40%" }} alt="uploaded" />
         )}
         {/* <Button variant="contained" color="secondary" onClick={() => setToastOpen(true)}>[DEV] open toast</Button><Button variant="contained" color="secondary" onClick={async () => { try { await axios.post("/clearDB"); } catch (error) { console.log("Error clearing DB" + error); } }} > [DEV] clear db </Button> */}
         <Input
@@ -144,6 +139,12 @@ export default function UploadModal(props) {
           value={photoDate}
           readOnly={!selectedFile}
         />
+        {selectedFile && (
+          <Typography variant="caption">
+            Flow: {closestEntry.flow}, water level:{" "}
+            {closestEntry.waterLevel.toFixed(2)}
+          </Typography>
+        )}
         <Typography mt={2} component="legend">
           Rating
         </Typography>
@@ -153,10 +154,11 @@ export default function UploadModal(props) {
           precision={0.5}
           onChange={(event, newValue) => {
             setUserRating(newValue);
+            setRatingGiven(true);
           }}
           readOnly={!selectedFile}
         />
-        {userRating}/5
+        {selectedFile && `${userRating} / 5`}
         <Button component="label">
           {selectedFile ? "Change file" : "upload file"}
           <input
@@ -176,14 +178,15 @@ export default function UploadModal(props) {
           <Grid item sm={6} container justifyContent="flex-end">
             <Button
               onClick={fileUploadHandler}
-              disabled={!selectedFile || !userRating || uploading}
+              disabled={
+                !selectedFile || !userRating || uploading || !ratingGiven
+              }
               variant="outlined"
             >
               Submit
             </Button>
           </Grid>
         </Grid>
-        <button onClick={() => findNearest(photoDate)}>find nearest</button>
         <Snackbar
           open={toastOpen}
           autoHideDuration={3000}

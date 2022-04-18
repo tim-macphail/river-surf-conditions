@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
-import { Button, CircularProgress, Rating, Typography } from "@mui/material";
+import {
+  IconButton,
+  Button,
+  CircularProgress,
+  Rating,
+  Typography,
+} from "@mui/material";
 import { Box } from "@mui/system";
+import { Refresh } from "@mui/icons-material";
 import UploadModal from "./UploadModal";
 const axios = require("axios");
 
@@ -56,9 +63,11 @@ export default function LiveConditions() {
 
   return (
     <>
-      <Button variant="contained" onClick={getRiverData}>
-        {loading ? "Loading..." : "Refresh"}
-      </Button>
+      {!loading && (
+        <IconButton size="large" color="inherit" onClick={getRiverData}>
+          <Refresh fontSize="large" />
+        </IconButton>
+      )}
       {loading && conditions ? (
         <CircularProgress mt={2} mb={2} />
       ) : (
