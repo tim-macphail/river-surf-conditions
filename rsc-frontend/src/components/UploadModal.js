@@ -21,6 +21,7 @@ export default function UploadModal(props) {
   const [imageURL, setImageURL] = useState();
   const [uploading, setUploading] = useState(false);
   const [closestEntry, setClosestEntry] = useState({
+    time: new Date(),
     waterLevel: 1.69,
     flow: 69.69,
   });
@@ -45,7 +46,14 @@ export default function UploadModal(props) {
     };
     try {
       const response = await axios.post("/findNearest", reqBody);
-      setClosestEntry(response.data);
+      console.log("Response: " + response.data.closestEntry);
+      const [time, waterLevel, flow] = response.data.closestEntry;
+
+      setClosestEntry({
+        time: time,
+        waterLevel: waterLevel,
+        flow: flow,
+      });
     } catch (error) {
       console.log("Error finding nearest: " + error);
     }
@@ -120,14 +128,18 @@ export default function UploadModal(props) {
           <>
             <img src={imageURL} style={{ maxHeight: "40%" }} alt="uploaded" />
             <Typography variant="caption">
-              Flow: {closestEntry.flow}, water level: {closestEntry.waterLevel}
+              Flow: {closestEntry.flow}, water level:{" "}
+              {closestEntry.waterLevel.toFixed(2)}
             </Typography>
           </>
         )}
         {/* <Button variant="contained" color="secondary" onClick={() => setToastOpen(true)}>[DEV] open toast</Button><Button variant="contained" color="secondary" onClick={async () => { try { await axios.post("/clearDB"); } catch (error) { console.log("Error clearing DB" + error); } }} > [DEV] clear db </Button> */}
         <Input
           type="datetime-local"
-          onChange={(e) => setPhotoDate(e.target.value)}
+          onChange={(e) => {
+            setPhotoDate(e.target.value);
+            findNearest(e.target.value);
+          }}
           inputProps={{ max: `${today}`, min: `${oldest}` }} // TODO: time max not applying, see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local#validation about validation
           value={photoDate}
           readOnly={!selectedFile}

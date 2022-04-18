@@ -86,7 +86,7 @@ const findNearest = async (req, res) => {
       Math.abs(closestEntryDate - targetDate) / 60000 +
       " minutes"
   );
-  return res.status(200).send("Successfully found nearest");
+  return res.status(200).send({ closestEntry });
 };
 
 module.exports = {
