@@ -82,14 +82,8 @@ const findNearest = async (req, res) => {
       closestEntryDate = new Date(closestEntry[0]);
     }
   });
-  console.log("Target: \t" + targetDate);
-  console.log("Closest: \t" + closestEntryDate);
-  console.log(
-    "Difference is " +
-      Math.abs(closestEntryDate - targetDate) / 60000 +
-      " minutes"
-  );
-  return res.status(200).send({ closestEntry });
+  const diffMins = Math.abs(closestEntryDate - targetDate) / 60000;
+  return res.status(200).send({ closestEntry, diffMins });
 };
 
 module.exports = {

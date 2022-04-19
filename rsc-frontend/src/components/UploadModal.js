@@ -23,21 +23,27 @@ export default function UploadModal(props) {
   const [ratingGiven, setRatingGiven] = useState(false);
   const [closestEntry, setClosestEntry] = useState({
     time: new Date(),
-    waterLevel: 1.69,
-    flow: 69.69,
+    waterLevel: 0.0,
+    flow: 0.0,
   });
+
+  const stringify = (date) => {
+    // Adjust for UTC conversion
+    let adjustedDate = date;
+    adjustedDate.setHours(adjustedDate.getHours() - 6); // ? depends on daylight saving time?
+    let dateStr = adjustedDate.toISOString();
+    // Format for html input type=datetime-local
+    dateStr = dateStr.slice(0, dateStr.lastIndexOf(":"));
+    return dateStr;
+  };
 
   // select a file from the file system
   const fileSelectedHandler = (event) => {
     const file = event.target.files[0];
-    let adjustedDate = file.lastModifiedDate;
-    adjustedDate.setHours(adjustedDate.getHours() - 6);
-    const dateStr = adjustedDate.toISOString();
-    const photoDate = dateStr.slice(0, dateStr.lastIndexOf(":"));
+    const photoDate = stringify(file.lastModifiedDate);
     setPhotoDate(photoDate);
     setSelectedFile(file);
     setImageURL(URL.createObjectURL(file));
-
     findNearest(photoDate);
   };
 
@@ -60,7 +66,6 @@ export default function UploadModal(props) {
   };
 
   // upload the selected file to the db
-
   const fileUploadHandler = async () => {
     const fd = new FormData();
     fd.append("image", selectedFile, selectedFile.name, {
@@ -88,15 +93,6 @@ export default function UploadModal(props) {
     }
   };
 
-  const stringify = (date) => {
-    // Adjust for UTC conversion
-    let adjustedDate = date;
-    adjustedDate.setHours(adjustedDate.getHours() - 6); // depends on daylight saving time?
-    let dateStr = adjustedDate.toISOString();
-    dateStr = dateStr.slice(0, dateStr.lastIndexOf(":"));
-    return dateStr;
-  };
-
   const oldest = stringify(new Date(props.oldestEntry));
   const today = stringify(new Date());
 
@@ -105,8 +101,9 @@ export default function UploadModal(props) {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: "50%",
+    width: "90%",
     height: "70%",
+    minHeight: "20rem",
     bgcolor: "background.paper",
     borderRadius: 10,
     boxShadow: 24,
@@ -122,7 +119,7 @@ export default function UploadModal(props) {
         {selectedFile && (
           <img src={imageURL} style={{ maxHeight: "40%" }} alt="uploaded" />
         )}
-        {/* <Button variant="contained" color="secondary" onClick={() => setToastOpen(true)}>[DEV] open toast</Button><Button variant="contained" color="secondary" onClick={async () => { try { await axios.post("/clearDB"); } catch (error) { console.log("Error clearing DB" + error); } }} > [DEV] clear db </Button> */}
+        {/* <Button onClick={() => axios.post("/clearDB")}>[DEV] clear db</Button> */}
         <Input
           type="datetime-local"
           onChange={(e) => {
@@ -164,12 +161,12 @@ export default function UploadModal(props) {
         </Button>
         {selectedFile && selectedFile.name}
         <Grid container spacing={2}>
-          <Grid item sm={6}>
+          <Grid item xs={6}>
             <Button onClick={props.close} color="warning">
               close
             </Button>
           </Grid>
-          <Grid item sm={6} container justifyContent="flex-end">
+          <Grid item xs={6} container justifyContent="flex-end">
             <Button
               onClick={fileUploadHandler}
               disabled={!selectedFile || !ratingGiven || uploading}

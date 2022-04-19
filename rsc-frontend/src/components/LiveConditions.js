@@ -9,6 +9,8 @@ import {
 import { Box } from "@mui/system";
 import { Refresh } from "@mui/icons-material";
 import UploadModal from "./UploadModal";
+import RatingDialogue from "./RatingDialogue";
+import SuccessSnack from "./SuccessSnack";
 const axios = require("axios");
 
 export default function LiveConditions() {
@@ -21,6 +23,14 @@ export default function LiveConditions() {
   const [loading, setLoading] = useState(true);
   const [popup, setPopup] = useState(false);
   const [oldestEntry, setOldestEntry] = useState();
+  const [givingRating, setGivingRating] = useState(false);
+  const [successMessage, showSuccessMessage] = useState(false);
+
+  const handleRatingClose = (result) => {
+    showSuccessMessage(result);
+    setGivingRating(false);
+    // showSuccessMessage(false);
+  };
 
   const getRiverData = async () => {
     setLoading(true);
@@ -54,6 +64,10 @@ export default function LiveConditions() {
   const getRating = async () => {
     const response = await axios.get("/rating");
     setRating(response.data.rating);
+  };
+
+  const giveRating = () => {
+    setGivingRating(true);
   };
 
   useEffect(() => {
@@ -93,14 +107,32 @@ export default function LiveConditions() {
           />
         </Box>
       )}
-      <Button variant="outlined" onClick={() => setPopup(!popup)}>
-        Upload
-      </Button>
+      <Box flexDirection="row">
+        <Button
+          sx={{ mx: 1 }}
+          variant="outlined"
+          onClick={() => setPopup(!popup)}
+        >
+          Upload a photo
+        </Button>
+        <Button sx={{ mx: 1 }} variant="outlined" onClick={giveRating}>
+          {givingRating ? "choose a rating" : "Rate the current conditions"}
+        </Button>
+      </Box>
       {popup && (
         <UploadModal
           open={popup}
           close={() => setPopup(false)}
           oldestEntry={oldestEntry}
+        />
+      )}
+      {givingRating && (
+        <RatingDialogue open={givingRating} close={handleRatingClose} />
+      )}
+      {successMessage && (
+        <SuccessSnack
+          message="Response recorded"
+          onClose={() => showSuccessMessage(false)}
         />
       )}
     </>
