@@ -6,7 +6,6 @@ let model;
 const init = async () => {
   model = await tf.loadLayersModel("file://./model-1a/model.json");
   model.compile({ loss: "meanSquaredError", optimizer: "sgd" });
-  console.log(model);
 };
 init();
 
@@ -19,7 +18,7 @@ const ys = tf.tensor2d([1, 3], [2, 1]);
 
 const train = (xs, ys) => {
   // Train the model
-  model.fit(xs, ys, { epochs: 1000, verbose: false }).then(() => {
+  model.fit(xs, ys, { epochs: 100, verbose: false }).then(() => {
     console.log("Done training");
     model.save("file://./model-1a");
   });

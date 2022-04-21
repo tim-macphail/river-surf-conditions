@@ -1,4 +1,4 @@
-import { Slider, TextField, Button, Typography } from "@mui/material";
+import { TextField, Button, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useState } from "react";
 import axios from "axios";
@@ -31,7 +31,7 @@ export default function Tens() {
         "& .MuiTextField-root": { mb: 4 },
       }}
     >
-      <Typography variant="h1">Hello Tens</Typography>
+      <Typography variant="h1">Predict Rating</Typography>
       <TextField
         label="Flow"
         onChange={(e) => setFlow(e.target.value)}
@@ -46,7 +46,7 @@ export default function Tens() {
         Predict
       </Button>
       <Typography variant="h5">
-        {prediction !== 0 && prediction.toFixed(3)}
+        {prediction !== 0 && `Prediction: ${prediction.toFixed(3)}`}
       </Typography>
     </Box>
   );

@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const conditions = require("./queries/conditions");
-const predictions = require("./predictions");
+const predictions = require("./queries/predictions");
 const path = require("path");
 const multer = require("multer");
 
