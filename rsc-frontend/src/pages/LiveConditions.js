@@ -8,9 +8,9 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import { Refresh } from "@mui/icons-material";
-import UploadModal from "./UploadModal";
-import RatingDialogue from "./RatingDialogue";
-import SuccessSnack from "./SuccessSnack";
+import RatingDialogue from "../components/RatingDialogue";
+import SuccessSnack from "../components/SuccessSnack";
+import { uniformStyle } from "../styles/styles";
 const axios = require("axios");
 
 export default function LiveConditions() {
@@ -21,15 +21,12 @@ export default function LiveConditions() {
   });
   const [rating, setRating] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [popup, setPopup] = useState(false);
-  const [oldestEntry, setOldestEntry] = useState();
   const [givingRating, setGivingRating] = useState(false);
   const [successMessage, showSuccessMessage] = useState(false);
 
   const handleRatingClose = (result) => {
     showSuccessMessage(result);
     setGivingRating(false);
-    // showSuccessMessage(false);
   };
 
   const getRiverData = async () => {
@@ -39,21 +36,13 @@ export default function LiveConditions() {
       const recentEntry =
         response.data.entries[response.data.entries.length - 1];
       const [time, waterLevel, flow] = recentEntry;
-      const msec = Date.parse(time);
-      const entryTime = new Date(msec);
+      const entryTime = new Date(Date.parse(time));
       setConditions({
-        time: `${
-          entryTime.getHours() > 12
-            ? (entryTime.getHours() - 12).toString()
-            : entryTime.getHours().toString()
-        }:${entryTime.getMinutes().toString().padStart(2, "0")} ${
-          entryTime.getHours() >= 12 ? "PM" : "AM"
-        }`,
+        time: entryTime,
         waterLevel: waterLevel,
         flow: 91.3574543, // TODO: hardcoded
       });
       setLoading(false);
-      setOldestEntry(response.data.entries[0][0]);
     } catch (error) {
       console.log(error);
       setConditions("Error");
@@ -75,8 +64,9 @@ export default function LiveConditions() {
     getRating();
   }, []);
 
+  const { time, waterLevel, flow } = conditions;
   return (
-    <>
+    <Box sx={uniformStyle}>
       {!loading && (
         <IconButton size="large" color="inherit" onClick={getRiverData}>
           <Refresh fontSize="large" />
@@ -87,19 +77,23 @@ export default function LiveConditions() {
       ) : (
         <Box mt={4} mb={4}>
           <Typography variant="body">
-            Gathered at {conditions["time"]}
+            {`Gathered at ${
+              time.getHours() > 12
+                ? (time.getHours() - 12).toString()
+                : time.getHours().toString()
+            }:${time.getMinutes().toString().padStart(2, "0")} ${
+              time.getHours() >= 12 ? "PM" : "AM"
+            }`}
           </Typography>
           <Typography variant="h3">
-            Water level: {conditions["waterLevel"].toFixed(2)}m
+            Water level: {waterLevel.toFixed(2)}m
           </Typography>
-          <Typography variant="h3">
-            Flow: {conditions["flow"].toFixed(2)} cms
-          </Typography>
+          <Typography variant="h3">Flow: {flow.toFixed(2)} cms</Typography>
           <Typography variant="h3">
             Predicted rating: {rating.toFixed(1)}
           </Typography>
           <Rating
-            value={rating}
+            value={parseInt(rating)}
             precision={0.1}
             size="large"
             sx={{ fontSize: "4rem" }}
@@ -108,24 +102,13 @@ export default function LiveConditions() {
         </Box>
       )}
       <Box flexDirection="row">
-        <Button
-          sx={{ mx: 1 }}
-          variant="outlined"
-          onClick={() => setPopup(!popup)}
-        >
+        <Button sx={{ mx: 1 }} variant="outlined" href="/upload">
           Upload a photo
         </Button>
         <Button sx={{ mx: 1 }} variant="outlined" onClick={giveRating}>
           {givingRating ? "choose a rating" : "Rate the current conditions"}
         </Button>
       </Box>
-      {popup && (
-        <UploadModal
-          open={popup}
-          close={() => setPopup(false)}
-          oldestEntry={oldestEntry}
-        />
-      )}
       {givingRating && (
         <RatingDialogue open={givingRating} close={handleRatingClose} />
       )}
@@ -135,6 +118,6 @@ export default function LiveConditions() {
           onClose={() => showSuccessMessage(false)}
         />
       )}
-    </>
+    </Box>
   );
 }

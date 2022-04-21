@@ -66,8 +66,7 @@ const uploadPhoto = async (req, res) => {
 };
 
 const findNearest = async (req, res) => {
-  const { dateStr } = req.body;
-  const { entries } = await getEntries();
+  const { dateStr, entries } = req.body;
 
   const targetDate = new Date(dateStr);
   let closestEntry = entries[0];

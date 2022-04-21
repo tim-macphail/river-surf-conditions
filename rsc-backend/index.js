@@ -2,8 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const conditions = require("./queries/conditions");
+const predictions = require("./predictions");
 const path = require("path");
-const mongoose = require("mongoose");
 const multer = require("multer");
 
 const storage = multer.diskStorage({
@@ -59,6 +59,8 @@ app.post("/findNearest", conditions.findNearest);
 app.post("/clearDB", conditions.clearDB);
 
 app.post("/uploadPhoto", upload.single("image"), conditions.uploadPhoto);
+
+app.post("/predict", predictions.getPrediction);
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);
