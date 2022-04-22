@@ -11,7 +11,13 @@ import {
 import { uniformStyle } from "../styles/styles";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { stringify } from "../logic/utils";
 
+/**
+ * Upload a photo page
+ * User can upload a photo and rate the conditions in it
+ *
+ */
 export default function UploadPage() {
   const [entries, setEntries] = useState();
   const [selectedFile, setSelectedFile] = useState();
@@ -36,16 +42,6 @@ export default function UploadPage() {
       console.log(error);
     }
     return false;
-  };
-
-  const stringify = (date) => {
-    // Adjust for UTC conversion
-    let adjustedDate = date;
-    adjustedDate.setHours(adjustedDate.getHours() - 6); // ? depends on daylight saving time?
-    let dateStr = adjustedDate.toISOString();
-    // Format for html input type=datetime-local
-    dateStr = dateStr.slice(0, dateStr.lastIndexOf(":"));
-    return dateStr;
   };
 
   // select a file from the file system

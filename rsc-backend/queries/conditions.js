@@ -1,12 +1,16 @@
+/**
+ * Handles requests to get the current conditions
+ */
+
 const request = require("request");
 const { mongoClient } = require("../mongoClient");
-const url =
+const riversUrl =
   "https://environment.alberta.ca/apps/Basins/data/figures/river/abrivers/stationdata/R_HG_05BH004_table.json";
 
 // helper function to do request
 function getEntries() {
   return new Promise(function (resolve, reject) {
-    request(url, function (error, res, body) {
+    request(riversUrl, function (error, res, body) {
       if (!error && res.statusCode == 200) {
         const parsedBody = JSON.parse(body)[0];
         const entries = parsedBody["data"];
@@ -18,9 +22,14 @@ function getEntries() {
   });
 }
 
+/**
+ * @param {*} req
+ * @param {*} res
+ * @returns {Array} entries
+ */
 // TODO: make utilize getEntries()
 const getBowRiverData = (req, res) => {
-  request(url, (error, response, body) => {
+  request(riversUrl, (error, response, body) => {
     if (!error && response.statusCode === 200) {
       const parsedBody = JSON.parse(body)[0];
       const entries = parsedBody["data"];
@@ -30,7 +39,12 @@ const getBowRiverData = (req, res) => {
   });
 };
 
-// !Testing
+/**
+ * For testing purposes only,
+ * removes all entries from sample_rsc.sample_ratings
+ * @param {*} req
+ * @param {*} res
+ */
 const clearDB = async (req, res) => {
   const rating = 4.2345; // TODO: hardcoded
   try {
@@ -42,11 +56,12 @@ const clearDB = async (req, res) => {
   }
 };
 
-const getRating = async (req, res) => {
-  const rating = 4.2345; // TODO: hardcoded
-  return res.status(200).send({ rating });
-};
-
+/**
+ * Uploads a photo with a date and a rating to the DB
+ * @param {*} req
+ * @param {*} res
+ * @returns
+ */
 // TODO: some middleware to check if image contains a virus
 const uploadPhoto = async (req, res) => {
   const photo = req.file;
@@ -65,6 +80,12 @@ const uploadPhoto = async (req, res) => {
   return res.status(200).send("Successfully uploaded photo");
 };
 
+/**
+ * Finds the nearest entry to a given date
+ * @param {*} req
+ * @param {*} res
+ * @returns
+ */
 const findNearest = async (req, res) => {
   const { dateStr, entries } = req.body;
 
@@ -87,7 +108,6 @@ const findNearest = async (req, res) => {
 
 module.exports = {
   getBowRiverData,
-  getRating,
   uploadPhoto,
   clearDB,
   findNearest,

@@ -3,6 +3,10 @@ import { Box } from "@mui/system";
 import { useState } from "react";
 import axios from "axios";
 
+/**
+ * Used for testing my Tensorflow model
+ * Routed at "/tens"
+ */
 export default function Tens() {
   const [flow, setFlow] = useState();
   const [waterLevel, setWaterLevel] = useState();

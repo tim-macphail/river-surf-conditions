@@ -14,8 +14,12 @@ export default function RatingDialogue(props) {
 
   const handleConfirm = async () => {
     try {
+      const reqBody = {
+        userRating: userRating,
+        entries: props.entries,
+      };
       // TODO: store entry in DB
-      // await axios.post();
+      axios.post("/rateCurrent", reqBody);
       props.close(true);
     } catch (error) {
       console.log("Error giving rating:" + error);

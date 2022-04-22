@@ -13,7 +13,13 @@ import SuccessSnack from "../components/SuccessSnack";
 import { uniformStyle } from "../styles/styles";
 const axios = require("axios");
 
+/**
+ * Home page of the website
+ * Displays live conditions and predicted rating
+ *
+ */
 export default function LiveConditions() {
+  const [entries, setEntries] = useState([]);
   const [conditions, setConditions] = useState({
     time: 0,
     waterLevel: 0,
@@ -33,8 +39,9 @@ export default function LiveConditions() {
     setLoading(true);
     try {
       const response = await axios.get("/bowRiverData");
-      const recentEntry =
-        response.data.entries[response.data.entries.length - 1];
+      const { entries } = response.data;
+      setEntries(entries);
+      const recentEntry = entries[entries.length - 1];
       const [time, waterLevel, flow] = recentEntry;
       const entryTime = new Date(Date.parse(time));
       setConditions({
@@ -51,8 +58,15 @@ export default function LiveConditions() {
   };
 
   const getRating = async () => {
-    const response = await axios.get("/rating");
+    const recentEntry = entries[entries.length - 1];
+    const [time, waterLevel, flow] = recentEntry;
+    const reqBody = {
+      flow: flow,
+      waterLevel: waterLevel,
+    };
+    const response = await axios.post("/predict", reqBody);
     setRating(response.data.rating);
+    console.log(response.data.rating);
   };
 
   const giveRating = () => {
@@ -86,11 +100,13 @@ export default function LiveConditions() {
             }`}
           </Typography>
           <Typography variant="h3">
-            Water level: {waterLevel.toFixed(2)}m
+            Water level: {waterLevel && waterLevel.toFixed(2)}m
           </Typography>
-          <Typography variant="h3">Flow: {flow.toFixed(2)} cms</Typography>
           <Typography variant="h3">
-            Predicted rating: {rating.toFixed(1)}
+            Flow: {flow && flow.toFixed(2)} cms
+          </Typography>
+          <Typography variant="h3">
+            Predicted rating: {rating && rating.toFixed(1)}
           </Typography>
           <Rating
             value={parseInt(rating)}
@@ -110,7 +126,11 @@ export default function LiveConditions() {
         </Button>
       </Box>
       {givingRating && (
-        <RatingDialogue open={givingRating} close={handleRatingClose} />
+        <RatingDialogue
+          entries={entries}
+          open={givingRating}
+          close={handleRatingClose}
+        />
       )}
       {successMessage && (
         <SuccessSnack

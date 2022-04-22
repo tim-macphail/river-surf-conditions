@@ -42,6 +42,18 @@ const getPrediction = (req, res) => {
   return res.status(500).send("Error");
 };
 
+const rateCurrent = (req, res) => {
+  const { userRating, entries } = req.body;
+  const recentEntry = entries[entries.length - 1];
+  const [time, waterLevel, flow] = recentEntry;
+  console.log({ waterLevel: waterLevel, flow: flow });
+  return res.status(200).send("success");
+  const xs = tf.tensor2d([[flow, waterLevel]]);
+  const ys = tf.tensor2d([userRating], [1]);
+  train(xs, ys);
+};
+
 module.exports = {
   getPrediction,
+  rateCurrent,
 };
