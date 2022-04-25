@@ -31,4 +31,4 @@ env
 /rsc-backend/.env
 /rsc-frontend/.env
 *.un~
-rsc-backend/uploads
+rsc-backend/uploads/*
