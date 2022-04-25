@@ -25,7 +25,7 @@ export default function LiveConditions() {
     waterLevel: 0,
     flow: 0,
   });
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState(4.3);
   const [loading, setLoading] = useState(true);
   const [givingRating, setGivingRating] = useState(false);
   const [successMessage, showSuccessMessage] = useState(false);
@@ -64,9 +64,13 @@ export default function LiveConditions() {
       flow: flow,
       waterLevel: waterLevel,
     };
-    const response = await axios.post("/predict", reqBody);
-    setRating(response.data.rating);
-    console.log(response.data.rating);
+    try {
+      const response = await axios.post("/predict", reqBody);
+      setRating(response.data.rating);
+      console.log(response.data.rating);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const giveRating = () => {
@@ -109,7 +113,7 @@ export default function LiveConditions() {
             Predicted rating: {rating && rating.toFixed(1)}
           </Typography>
           <Rating
-            value={parseInt(rating)}
+            value={rating}
             precision={0.1}
             size="large"
             sx={{ fontSize: "4rem" }}

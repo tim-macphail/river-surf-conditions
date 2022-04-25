@@ -1,6 +1,6 @@
 - [ ] break into smaller components
 - [ ] change logo from default react one
-- [ ] refresh button on main page look better
+- [ ] refresh button on main page look better (drag down effect)
 - [ ] escape key close modal
 - [ ] change entries to state, don't need to make api request every time date picker is changed
 - [ ] figure out how to rate conditions NOW when entries for NOW aren't available for an hour (server thing)

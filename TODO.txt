@@ -1,3 +1,0 @@
-- restrict file upload to photos
-- find closest entry to date
-- break into smaller components

@@ -9,7 +9,8 @@ const init = async () => {
 };
 init();
 
-// Generate synthetic data for training
+// Generate synthetic data for training,
+// since flow data is not available from Alberta Environment and Rivers yet
 const xs = tf.tensor2d([
   [1, 2],
   [3, 4],
@@ -25,7 +26,7 @@ const train = (xs, ys) => {
 };
 
 const predict = (flow, waterLevel) => {
-  train(xs, ys);
+  // train(xs, ys);
   console.log({ flow: flow, waterLevel: waterLevel });
   const output = model.predict(tf.tensor2d([flow, waterLevel], [1, 2]));
   const prediction = Array.from(output.dataSync())[0];
@@ -47,10 +48,14 @@ const rateCurrent = (req, res) => {
   const recentEntry = entries[entries.length - 1];
   const [time, waterLevel, flow] = recentEntry;
   console.log({ waterLevel: waterLevel, flow: flow });
-  return res.status(200).send("success");
-  const xs = tf.tensor2d([[flow, waterLevel]]);
-  const ys = tf.tensor2d([userRating], [1]);
-  train(xs, ys);
+  try {
+    const xs = tf.tensor2d([[flow, waterLevel]]);
+    const ys = tf.tensor2d([userRating], [1]);
+    train(xs, ys);
+  } catch (error) {
+    return res.status(500).send("Error recording rating: " + error);
+  }
+  return res.status(200).send("Rating recorded successfully");
 };
 
 module.exports = {
