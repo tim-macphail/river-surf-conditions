@@ -5,17 +5,21 @@ import LiveConditions from "./pages/LiveConditions";
 import UploadPage from "./pages/UploadPage";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-import TopBar from "./components/TopBar";
 import Tens from "./pages/Tens";
+import PhotosPage from "./pages/PhotosPage";
+import TopBar from "./components/TopBar";
+import * as styles from "./styles/styles";
+import { Box, CssBaseline } from "@mui/material";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Router>
-    {/* <TopBar /> */}
+    <TopBar />
     <Routes>
       <Route path="/" element={<LiveConditions />} />
       <Route path="/upload" element={<UploadPage />} />
       <Route path="/tens" element={<Tens />} />
+      <Route path="/photos" element={<PhotosPage />} />
     </Routes>
   </Router>
 );

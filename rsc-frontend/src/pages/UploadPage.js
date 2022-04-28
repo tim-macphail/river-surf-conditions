@@ -47,6 +47,7 @@ export default function UploadPage() {
   // select a file from the file system
   const fileSelectedHandler = (event) => {
     const file = event.target.files[0];
+    if (!file) return;
     const photoDate = stringify(file.lastModifiedDate);
     setPhotoDate(photoDate);
     setSelectedFile(file);
@@ -76,15 +77,7 @@ export default function UploadPage() {
   // upload the selected file to the db
   const fileUploadHandler = async () => {
     const fd = new FormData();
-    fd.append("image", selectedFile, selectedFile.name, {
-      onUploadProgress: (progressEvent) => {
-        console.log(
-          "Upload Progress: " +
-            Math.round((progressEvent.loaded / progressEvent.total) * 100) +
-            "%"
-        );
-      },
-    });
+    fd.append("image", selectedFile, selectedFile.name);
     fd.append("date", photoDate);
     fd.append("userRating", userRating);
     try {
@@ -109,7 +102,6 @@ export default function UploadPage() {
 
   return (
     <Box sx={uniformStyle}>
-      <Button href="/">Home</Button>
       {selectedFile && (
         <>
           <Box
@@ -160,7 +152,7 @@ export default function UploadPage() {
           />
         </>
       )}
-      <Button component="label">
+      <Button component="label" variant="outlined" sx={{ my: 1 }}>
         {selectedFile ? "Change file" : "upload file"}
         <input
           onChange={fileSelectedHandler}
@@ -169,14 +161,17 @@ export default function UploadPage() {
           hidden
         />
       </Button>
-      {selectedFile && selectedFile.name}
-      <Button
-        onClick={fileUploadHandler}
-        disabled={!selectedFile || !ratingGiven || uploading}
-        variant="outlined"
-      >
-        Submit
-      </Button>
+      {/* {selectedFile && selectedFile.name} */}
+      {selectedFile && (
+        <Button
+          onClick={fileUploadHandler}
+          disabled={!selectedFile || !ratingGiven || uploading}
+          variant="outlined"
+          sx={{ my: 1 }}
+        >
+          Submit
+        </Button>
+      )}
       <Snackbar
         open={toastOpen}
         autoHideDuration={3000}

@@ -5,12 +5,14 @@ import {
   CircularProgress,
   Rating,
   Typography,
+  CssBaseline,
 } from "@mui/material";
 import { Box } from "@mui/system";
 import { Refresh } from "@mui/icons-material";
 import RatingDialogue from "../components/RatingDialogue";
 import SuccessSnack from "../components/SuccessSnack";
-import { uniformStyle } from "../styles/styles";
+import * as styles from "../styles/styles";
+import TopBar from "../components/TopBar";
 const axios = require("axios");
 
 /**
@@ -42,10 +44,10 @@ export default function LiveConditions() {
       const { entries } = response.data;
       setEntries(entries);
       const recentEntry = entries[entries.length - 1];
-      const [time, waterLevel, flow] = recentEntry;
-      const entryTime = new Date(Date.parse(time));
+      const [unparsedTime, waterLevel, flow] = recentEntry;
+      const time = new Date(Date.parse(unparsedTime));
       setConditions({
-        time: entryTime,
+        time: time,
         waterLevel: waterLevel,
         flow: 91.3574543, // TODO: hardcoded
       });
@@ -59,6 +61,7 @@ export default function LiveConditions() {
 
   const getRating = async () => {
     const recentEntry = entries[entries.length - 1];
+    console.log(entries);
     const [time, waterLevel, flow] = recentEntry;
     const reqBody = {
       flow: flow,
@@ -78,70 +81,95 @@ export default function LiveConditions() {
   };
 
   useEffect(() => {
-    getRiverData();
-    getRating();
+    async function fetchData() {
+      await getRiverData();
+      console.log(conditions);
+    }
+    fetchData();
   }, []);
 
   const { time, waterLevel, flow } = conditions;
   return (
-    <Box sx={uniformStyle}>
-      {!loading && (
-        <IconButton size="large" color="inherit" onClick={getRiverData}>
-          <Refresh fontSize="large" />
-        </IconButton>
-      )}
-      {loading && conditions ? (
-        <CircularProgress mt={2} mb={2} />
-      ) : (
-        <Box mt={4} mb={4}>
-          <Typography variant="body">
-            {`Gathered at ${
-              time.getHours() > 12
-                ? (time.getHours() - 12).toString()
-                : time.getHours().toString()
-            }:${time.getMinutes().toString().padStart(2, "0")} ${
-              time.getHours() >= 12 ? "PM" : "AM"
-            }`}
-          </Typography>
-          <Typography variant="h3">
-            Water level: {waterLevel && waterLevel.toFixed(2)}m
-          </Typography>
-          <Typography variant="h3">
-            Flow: {flow && flow.toFixed(2)} cms
-          </Typography>
-          <Typography variant="h3">
-            Predicted rating: {rating && rating.toFixed(1)}
-          </Typography>
-          <Rating
-            value={rating}
-            precision={0.1}
-            size="large"
-            sx={{ fontSize: "4rem" }}
-            readOnly
-          />
+    <>
+      <CssBaseline />
+      <Box
+        sx={
+          localStorage.getItem("darkMode") === "totally"
+            ? styles.darkStyle
+            : styles.lightStyle
+        }
+      >
+        {localStorage.getItem("darkMode") === "totally" ? (
+          <Button onClick={() => localStorage.setItem("darkMode", null)}>
+            Deactivate dark mode
+          </Button>
+        ) : (
+          <Button onClick={() => localStorage.setItem("darkMode", "totally")}>
+            Activate dark mode
+          </Button>
+        )}
+
+        {!loading && (
+          <IconButton size="large" color="inherit" onClick={getRiverData}>
+            <Refresh fontSize="large" />
+          </IconButton>
+        )}
+        {loading && conditions ? (
+          <CircularProgress mt={2} mb={2} />
+        ) : (
+          <Box mt={4} mb={4}>
+            <Typography variant="body">
+              {`Gathered at ${
+                time.getHours() > 12
+                  ? (time.getHours() - 12).toString()
+                  : time.getHours().toString()
+              }:${time.getMinutes().toString().padStart(2, "0")} ${
+                time.getHours() >= 12 ? "PM" : "AM"
+              }`}
+            </Typography>
+            <Typography variant="h3">
+              Water level: {waterLevel && waterLevel.toFixed(2)}m
+            </Typography>
+            <Typography variant="h3">
+              Flow: {flow && flow.toFixed(2)} cms
+            </Typography>
+            <Typography variant="h3">
+              Predicted rating: {rating && rating.toFixed(1)}
+            </Typography>
+            <Rating
+              value={rating}
+              precision={0.1}
+              size="large"
+              sx={{ fontSize: "4rem" }}
+              readOnly
+            />
+          </Box>
+        )}
+        <Box flexDirection="row">
+          <Button sx={{ mx: 1, my: 1 }} variant="outlined" href="/upload">
+            Upload a photo
+          </Button>
+          <Button sx={{ mx: 1, my: 1 }} variant="outlined" href="/photos">
+            View a photo
+          </Button>
+          <Button sx={{ mx: 1, my: 1 }} variant="outlined" onClick={giveRating}>
+            {givingRating ? "choose a rating" : "Rate the current conditions"}
+          </Button>
         </Box>
-      )}
-      <Box flexDirection="row">
-        <Button sx={{ mx: 1 }} variant="outlined" href="/upload">
-          Upload a photo
-        </Button>
-        <Button sx={{ mx: 1 }} variant="outlined" onClick={giveRating}>
-          {givingRating ? "choose a rating" : "Rate the current conditions"}
-        </Button>
+        {givingRating && (
+          <RatingDialogue
+            entries={entries}
+            open={givingRating}
+            close={handleRatingClose}
+          />
+        )}
+        {successMessage && (
+          <SuccessSnack
+            message="Response recorded"
+            onClose={() => showSuccessMessage(false)}
+          />
+        )}
       </Box>
-      {givingRating && (
-        <RatingDialogue
-          entries={entries}
-          open={givingRating}
-          close={handleRatingClose}
-        />
-      )}
-      {successMessage && (
-        <SuccessSnack
-          message="Response recorded"
-          onClose={() => showSuccessMessage(false)}
-        />
-      )}
-    </Box>
+    </>
   );
 }
