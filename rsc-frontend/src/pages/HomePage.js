@@ -26,7 +26,7 @@ export default function LiveConditions() {
     flow: 0,
   });
   const [rating, setRating] = useState(4.3);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [givingRating, setGivingRating] = useState(false);
   const [successMessage, showSuccessMessage] = useState(false);
 
@@ -82,7 +82,7 @@ export default function LiveConditions() {
     async function fetchData() {
       await getRiverData();
     }
-    fetchData();
+    // fetchData();
   }, []);
 
   const { time, waterLevel, flow } = conditions;
