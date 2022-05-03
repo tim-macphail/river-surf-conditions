@@ -82,7 +82,7 @@ export default function LiveConditions() {
     async function fetchData() {
       await getRiverData();
     }
-    fetchData();
+    // fetchData();
   }, []);
 
   const { time, waterLevel, flow } = conditions;
@@ -109,14 +109,14 @@ export default function LiveConditions() {
       ) : (
         <Box mt={4} mb={4}>
           <Typography variant="body">
-            {time &&
+            {/* {time &&
               `Gathered at ${
                 time.getHours() > 12
                   ? (time.getHours() - 12).toString()
                   : time.getHours().toString()
               }:${time.getMinutes().toString().padStart(2, "0")} ${
                 time.getHours() >= 12 ? "PM" : "AM"
-              }`}
+              }`} */}
           </Typography>
           <Typography variant="h3">
             Water level: {waterLevel && waterLevel.toFixed(2)}m

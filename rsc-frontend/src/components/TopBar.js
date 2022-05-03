@@ -12,7 +12,7 @@ export default function TopBar() {
         {/* <Toolbar> */}
         <Typography align="left" sx={{ flexGrow: 1 }}>
           <Button sx={{ color: "white" }} href="/">
-            Home
+            Hoooooooooooooooome
           </Button>
         </Typography>
         {/* </Toolbar> */}
