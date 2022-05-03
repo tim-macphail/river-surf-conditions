@@ -26,7 +26,7 @@ export default function LiveConditions() {
     flow: 0,
   });
   const [rating, setRating] = useState(4.3);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [givingRating, setGivingRating] = useState(false);
   const [successMessage, showSuccessMessage] = useState(false);
 
@@ -52,7 +52,7 @@ export default function LiveConditions() {
       });
       setLoading(false);
     } catch (error) {
-      console.log(error);
+      console.log("Caught error: " + error);
       setConditions("Error");
       setLoading(false);
     }
@@ -109,13 +109,14 @@ export default function LiveConditions() {
       ) : (
         <Box mt={4} mb={4}>
           <Typography variant="body">
-            {`Gathered at ${
-              time.getHours() > 12
-                ? (time.getHours() - 12).toString()
-                : time.getHours().toString()
-            }:${time.getMinutes().toString().padStart(2, "0")} ${
-              time.getHours() >= 12 ? "PM" : "AM"
-            }`}
+            {time &&
+              `Gathered at ${
+                time.getHours() > 12
+                  ? (time.getHours() - 12).toString()
+                  : time.getHours().toString()
+              }:${time.getMinutes().toString().padStart(2, "0")} ${
+                time.getHours() >= 12 ? "PM" : "AM"
+              }`}
           </Typography>
           <Typography variant="h3">
             Water level: {waterLevel && waterLevel.toFixed(2)}m
