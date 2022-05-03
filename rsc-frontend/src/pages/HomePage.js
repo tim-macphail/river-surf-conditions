@@ -82,7 +82,7 @@ export default function LiveConditions() {
     async function fetchData() {
       await getRiverData();
     }
-    // fetchData();
+    fetchData();
   }, []);
 
   const { time, waterLevel, flow } = conditions;
