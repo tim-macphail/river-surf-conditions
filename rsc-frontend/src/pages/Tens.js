@@ -24,24 +24,15 @@ export default function Tens() {
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        textAlign: "center",
-        "& .MuiTextField-root": { mb: 4 },
-      }}
-    >
-      <Typography variant="h1">Predict Rating</Typography>
+    <>
+      <Typography variant="h3">Predict Rating</Typography>
       <TextField
         label="Flow"
         onChange={(e) => setFlow(e.target.value)}
         focused
       />
       <TextField
+        sx={{ m: 2 }}
         label="Water Level"
         onChange={(e) => setWaterLevel(e.target.value)}
         focused
@@ -52,6 +43,6 @@ export default function Tens() {
       <Typography variant="h5">
         {prediction !== 0 && `Prediction: ${prediction.toFixed(3)}`}
       </Typography>
-    </Box>
+    </>
   );
 }

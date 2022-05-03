@@ -10,7 +10,7 @@ const uniformStyle = {
 
 const lightStyle = {
   ...uniformStyle,
-  bgcolor: "background.paper",
+  bgcolor: "white",
   color: "black",
 };
 

@@ -3,15 +3,19 @@ import * as React from "react";
 
 export default function TopBar() {
   return (
-    <Box position="sticky">
+    <Box
+      position="absolute"
+      minHeight="10vh"
+      sx={{ minHeight: "50vh", backgroundColor: "red", height: "500px" }}
+    >
       <AppBar>
-        <Toolbar>
-          <Typography align="center" sx={{ flexGrow: 1 }}>
-            <Button sx={{ color: "white" }} href="/">
-              Home
-            </Button>
-          </Typography>
-        </Toolbar>
+        {/* <Toolbar> */}
+        <Typography align="left" sx={{ flexGrow: 1 }}>
+          <Button sx={{ color: "white" }} href="/">
+            Home
+          </Button>
+        </Typography>
+        {/* </Toolbar> */}
       </AppBar>
     </Box>
   );

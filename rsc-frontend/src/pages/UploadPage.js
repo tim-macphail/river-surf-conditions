@@ -8,7 +8,6 @@ import {
   Snackbar,
 } from "@mui/material";
 
-import { uniformStyle } from "../styles/styles";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { stringify } from "../logic/utils";
@@ -101,7 +100,7 @@ export default function UploadPage() {
   }, []);
 
   return (
-    <Box sx={uniformStyle}>
+    <>
       {selectedFile && (
         <>
           <Box
@@ -115,7 +114,7 @@ export default function UploadPage() {
             src={imageURL}
           />
           <Typography variant="caption">
-            Flow: {closestEntry.flow}, water level:{" "}
+            Flow: {closestEntry.flow.toFixed(2)}, water level:{" "}
             {closestEntry.waterLevel.toFixed(2)}
           </Typography>
           <Input
@@ -190,6 +189,6 @@ export default function UploadPage() {
           Image uploaded successfully
         </Alert>
       </Snackbar>
-    </Box>
+    </>
   );
 }
