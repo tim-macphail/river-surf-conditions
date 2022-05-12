@@ -1,6 +1,6 @@
 # River Surf Conditions
 
-River surf conditions is a web app created using the MERN stack that provides information about river waves in Calgary.
+[River surf conditions](http://rsc.vercel.app/) is a web app created using the MERN stack that provides information about river waves in Calgary.
 
 ## Rating the current conditions
 
