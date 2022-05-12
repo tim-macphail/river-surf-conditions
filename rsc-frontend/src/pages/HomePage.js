@@ -39,7 +39,9 @@ export default function LiveConditions() {
     setLoading(true);
     try {
       // const response = await axios.get(process.env.API + "/bowRiverData");
-      const response = await axios.get("/bowRiverData");
+      const response = await axios.get(
+        "https://river-surf-conditions.herokuapp.com/bowRiverData"
+      );
       const { entries } = response.data;
       setEntries(entries);
       const recentEntry = entries[entries.length - 1];
