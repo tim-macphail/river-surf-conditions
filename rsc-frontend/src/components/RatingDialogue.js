@@ -2,6 +2,7 @@ import { Grid, DialogTitle, Dialog, Box, Button, Rating } from "@mui/material";
 import axios from "axios";
 
 import { useState } from "react";
+import { apiEndpoint } from "../logic/utils";
 
 export default function RatingDialogue(props) {
   const [userRating, setUserRating] = useState(0);
@@ -19,8 +20,11 @@ export default function RatingDialogue(props) {
         entries: props.entries,
       };
       // TODO: store entry in DB
-      axios.post("/rateCurrent", reqBody);
-      props.close(true);
+      const res = await axios.post(`${apiEndpoint}/rateCurrent`, reqBody);
+      console.log(res);
+      if (res.status === 200) {
+        props.close(true);
+      }
     } catch (error) {
       console.log("Error giving rating:" + error);
     }

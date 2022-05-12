@@ -11,7 +11,8 @@ import { Box } from "@mui/system";
 import { Refresh } from "@mui/icons-material";
 import RatingDialogue from "../components/RatingDialogue";
 import SuccessSnack from "../components/SuccessSnack";
-const axios = require("axios");
+import { apiEndpoint } from "../logic/utils";
+import axios from "axios";
 
 /**
  * Home page of the website
@@ -38,8 +39,8 @@ export default function LiveConditions() {
   const getRiverData = async () => {
     setLoading(true);
     try {
-      // const response = await axios.get(process.env.API + "/bowRiverData");
-      const response = await axios.get("/bowRiverData");
+      const response = await axios.get(`${apiEndpoint}/bowRiverData`);
+      // const response = await axios.get(`/bowRiverData`);
       const { entries } = response.data;
       setEntries(entries);
       const recentEntry = entries[entries.length - 1];
@@ -66,7 +67,7 @@ export default function LiveConditions() {
       waterLevel: waterLevel,
     };
     try {
-      const response = await axios.post("/predict", reqBody);
+      const response = await axios.post(`${apiEndpoint}/predict`, reqBody);
       setRating(response.data.rating);
       console.log(response.data.rating);
     } catch (error) {
@@ -82,7 +83,7 @@ export default function LiveConditions() {
     async function fetchData() {
       await getRiverData();
     }
-    // fetchData();
+    fetchData();
   }, []);
 
   const { time, waterLevel, flow } = conditions;
@@ -99,6 +100,7 @@ export default function LiveConditions() {
         </Button>
       )}
 
+      {/* <Button onClick={() => axios.post(`/clearDB`)}>clear db</Button> */}
       {!loading && (
         <IconButton size="large" color="inherit" onClick={getRiverData}>
           <Refresh fontSize="large" />

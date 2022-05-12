@@ -7,10 +7,9 @@ import {
   Typography,
   Snackbar,
 } from "@mui/material";
-
 import { useEffect, useState } from "react";
+import { stringify, apiEndpoint } from "../logic/utils";
 import axios from "axios";
-import { stringify } from "../logic/utils";
 
 /**
  * Upload a photo page
@@ -34,7 +33,7 @@ export default function UploadPage() {
 
   const getRiverData = async () => {
     try {
-      const response = await axios.get("/bowRiverData");
+      const response = await axios.get(`${apiEndpoint}/bowRiverData`);
       const { entries } = response.data;
       return entries;
     } catch (error) {
@@ -60,7 +59,7 @@ export default function UploadPage() {
       dateStr: dateStr,
     };
     try {
-      const response = await axios.post("/findNearest", reqBody);
+      const response = await axios.post(`${apiEndpoint}/findNearest`, reqBody);
       const [time, waterLevel, flow] = response.data.closestEntry;
 
       setClosestEntry({
@@ -81,7 +80,7 @@ export default function UploadPage() {
     fd.append("userRating", userRating);
     try {
       setUploading(true);
-      await axios.post("/uploadPhoto", fd);
+      await axios.post(`${apiEndpoint}/uploadPhoto`, fd);
       setSelectedFile(null);
       setUserRating(0);
       setToastOpen(true);

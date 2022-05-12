@@ -21,4 +21,6 @@ const stringify = (date) => {
 
 module.exports = {
   stringify,
+  apiEndpoint: "http://localhost:3001",
+  // apiEndpoint: "https://river-surf-conditions.herokuapp.com",
 };
