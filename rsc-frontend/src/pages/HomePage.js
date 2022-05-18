@@ -29,9 +29,11 @@ export default function LiveConditions() {
   const [loading, setLoading] = useState(true);
   const [givingRating, setGivingRating] = useState(false);
   const [successMessage, showSuccessMessage] = useState(false);
+  const [failureMessage, showFailureMessage] = useState(false);
 
-  const handleRatingClose = (result) => {
-    showSuccessMessage(result);
+  const handleRatingClose = (succeeded) => {
+    showSuccessMessage(succeeded);
+    showFailureMessage(!succeeded);
     setGivingRating(false);
   };
 
@@ -91,25 +93,15 @@ export default function LiveConditions() {
   return (
     <>
       <CssBaseline />
-      {localStorage.getItem("darkMode") === "totally" ? (
-        <Button onClick={() => localStorage.setItem("darkMode", null)}>
-          Deactivate dark mode
-        </Button>
-      ) : (
-        <Button onClick={() => localStorage.setItem("darkMode", "totally")}>
-          Activate dark mode
-        </Button>
-      )}
-
       {!loading && (
         <IconButton size="large" color="inherit" onClick={getRiverData}>
           <Refresh fontSize="large" />
         </IconButton>
       )}
       {loading && conditions ? (
-        <CircularProgress mt={2} mb={2} />
+        <CircularProgress mt={2} />
       ) : (
-        <Box mt={4} mb={4}>
+        <Box mb={4}>
           <Typography variant="body">
             {time &&
               `Gathered at ${
@@ -139,14 +131,14 @@ export default function LiveConditions() {
         </Box>
       )}
       <Box flexDirection="row">
+        <Button sx={{ mx: 1, my: 1 }} variant="outlined" onClick={giveRating}>
+          Rate the current conditions
+        </Button>
         <Button sx={{ mx: 1, my: 1 }} variant="outlined" href="/upload">
           Upload a photo
         </Button>
         <Button sx={{ mx: 1, my: 1 }} variant="outlined" href="/photos">
           View a photo
-        </Button>
-        <Button sx={{ mx: 1, my: 1 }} variant="outlined" onClick={giveRating}>
-          {givingRating ? "choose a rating" : "Rate the current conditions"}
         </Button>
       </Box>
       {givingRating && (
@@ -160,6 +152,12 @@ export default function LiveConditions() {
         <SuccessSnack
           message="Response recorded"
           onClose={() => showSuccessMessage(false)}
+        />
+      )}
+      {failureMessage && (
+        <SuccessSnack
+          message="Error!"
+          onClose={() => showFailureMessage(false)}
         />
       )}
     </>

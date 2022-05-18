@@ -9,7 +9,7 @@ export default function RatingDialogue(props) {
 
   const handleChange = (e) => {
     setRatingWasGiven(true);
-    setUserRating(e.target.value);
+    setUserRating(parseFloat(e.target.value));
   };
 
   const handleConfirm = async () => {
@@ -19,10 +19,13 @@ export default function RatingDialogue(props) {
         entries: props.entries,
       };
       // TODO: store entry in DB
-      axios.post("/rateCurrent", reqBody);
-      props.close(true);
+      const res = axios.post("/rateCurrent", reqBody);
+      console.log((await res).status);
+      if ((await res).status === 200) props.close(true);
     } catch (error) {
       console.log("Error giving rating:" + error);
+      props.close(false);
+      // TODO: FailureSnack
     }
   };
 

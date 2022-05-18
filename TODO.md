@@ -4,3 +4,9 @@
 - [ ] escape key close modal
 - [ ] change entries to state, don't need to make api request every time date picker is changed
 - [ ] figure out how to rate conditions NOW when entries for NOW aren't available for an hour (server thing)
+
+- photos storage in DB or somewhere else
+- delete photos off heroku
+- push to heroku
+- make sure that rating now is actually training the model
+- reset the model
