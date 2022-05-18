@@ -43,8 +43,8 @@ export default function LiveConditions() {
     setLoading(true);
     try {
       const response = await axios.get(
-        // "https://river-surf-conditions.herokuapp.com/bowRiverData"
-        "/bowRiverData"
+        "https://river-surf-conditions.herokuapp.com/bowRiverData"
+        // "/bowRiverData"
       );
       const { entries } = response.data;
       setEntries(entries);
