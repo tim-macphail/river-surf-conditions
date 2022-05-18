@@ -9,8 +9,7 @@ const init = async () => {
 };
 init();
 
-// Generate synthetic data for training,
-// since flow data is not available from Alberta Environment and Rivers yet
+// Generate synthetic data for training
 const xs = tf.tensor2d([
   [1, 2],
   [3, 4],
@@ -19,32 +18,27 @@ const ys = tf.tensor2d([1, 3], [2, 1]);
 
 const train = (xs, ys) => {
   // Train the model
-  model.fit(xs, ys, { epochs: 100, verbose: false }).then(() => {
+  model.fit(xs, ys, { epochs: 1000, verbose: false }).then(() => {
     console.log("Done training");
     model.save("file://./model-1a");
   });
 };
 
 const predict = (flow, waterLevel) => {
-  // train(xs, ys);
-  // const output = model.predict(tf.tensor2d([flow, waterLevel], [1, 2]));
-  // const prediction = Array.from(output.dataSync())[0];
-  // console.log(prediction);
-  // return prediction;
-
-  const myTensor = tf.tensor2d([69, 1.95], [1, 2]);
-  const output = model.predict(myTensor);
-  console.log(output.dataSync());
+  train(xs, ys);
+  const output = model.predict(tf.tensor2d([flow, waterLevel], [1, 2]));
+  const prediction = Array.from(output.dataSync())[0];
+  console.log(prediction);
+  return prediction;
 };
 
 const getPrediction = (req, res) => {
-  console.log("Getting prediction");
   const { flow, waterLevel } = req.body;
   const prediction = predict(flow, waterLevel);
   if (prediction) {
     return res.status(200).send({ prediction });
   }
-  return res.status(501).send("Error");
+  return res.status(500).send("Error");
 };
 
 const rateCurrent = (req, res) => {

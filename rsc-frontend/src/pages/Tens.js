@@ -14,8 +14,8 @@ export default function Tens() {
 
   const handleClick = () => {
     const reqBody = {
-      flow: parseInt(flow),
-      waterLevel: parseInt(waterLevel),
+      flow: parseFloat(flow),
+      waterLevel: parseFloat(waterLevel),
     };
     axios.post("/predict", reqBody).then((response) => {
       const { prediction } = response.data;
