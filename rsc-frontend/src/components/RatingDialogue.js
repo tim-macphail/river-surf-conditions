@@ -20,7 +20,6 @@ export default function RatingDialogue(props) {
       };
       // TODO: store entry in DB
       const res = axios.post("/rateCurrent", reqBody);
-      console.log((await res).status);
       if ((await res).status === 200) props.close("success");
     } catch (error) {
       console.log("Error giving rating:" + error);

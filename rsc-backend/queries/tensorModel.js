@@ -27,29 +27,35 @@ const train = (xs, ys) => {
 
 const predict = (flow, waterLevel) => {
   // train(xs, ys);
-  const output = model.predict(tf.tensor2d([flow, waterLevel], [1, 2]));
-  const prediction = Array.from(output.dataSync())[0];
-  return prediction;
+  // const output = model.predict(tf.tensor2d([flow, waterLevel], [1, 2]));
+  // const prediction = Array.from(output.dataSync())[0];
+  // console.log(prediction);
+  // return prediction;
+
+  const myTensor = tf.tensor2d([69, 1.95], [1, 2]);
+  const output = model.predict(myTensor);
+  console.log(output.dataSync());
 };
 
 const getPrediction = (req, res) => {
+  console.log("Getting prediction");
   const { flow, waterLevel } = req.body;
   const prediction = predict(flow, waterLevel);
   if (prediction) {
     return res.status(200).send({ prediction });
   }
-  return res.status(500).send("Error");
+  return res.status(501).send("Error");
 };
 
 const rateCurrent = (req, res) => {
   const { userRating, entries } = req.body;
   const recentEntry = entries[entries.length - 1];
   const [time, waterLevel, flow] = recentEntry;
-  console.log({ waterLevel: waterLevel, flow: flow, userRating: userRating });
+  // console.log({ waterLevel: waterLevel, flow: flow, userRating: userRating });
   try {
     const xs = tf.tensor2d([[flow, waterLevel]]);
     const ys = tf.tensor2d([[userRating]]);
-    // const err = tf.tensor2d([[userRating]], 980);
+    // const throwAnErr = tf.tensor2d([[userRating]], 980);
     train(xs, ys);
   } catch (error) {
     console.log("error");

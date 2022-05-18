@@ -42,9 +42,9 @@ export default function LiveConditions() {
   const getRiverData = async () => {
     setLoading(true);
     try {
-      // const response = await axios.get(process.env.API + "/bowRiverData");
       const response = await axios.get(
-        "https://river-surf-conditions.herokuapp.com/bowRiverData"
+        // "https://river-surf-conditions.herokuapp.com/bowRiverData"
+        "/bowRiverData"
       );
       const { entries } = response.data;
       setEntries(entries);
@@ -56,6 +56,7 @@ export default function LiveConditions() {
         waterLevel: waterLevel,
         flow: flow,
       });
+      getRating(recentEntry);
       setLoading(false);
     } catch (error) {
       console.log("Caught error: " + error);
@@ -64,24 +65,18 @@ export default function LiveConditions() {
     }
   };
 
-  const getRating = async () => {
-    const recentEntry = entries[entries.length - 1];
+  const getRating = async (recentEntry) => {
     const [time, waterLevel, flow] = recentEntry;
     const reqBody = {
-      flow: flow,
-      waterLevel: waterLevel,
+      flow: parseFloat(flow),
+      waterLevel: parseFloat(waterLevel),
     };
     try {
       const response = await axios.post("/predict", reqBody);
-      setRating(response.data.rating);
-      console.log(response.data.rating);
+      setRating(response.data.prediction);
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const giveRating = () => {
-    setGivingRating(true);
   };
 
   useEffect(() => {
@@ -133,7 +128,11 @@ export default function LiveConditions() {
         </Box>
       )}
       <Box flexDirection="row">
-        <Button sx={{ mx: 1, my: 1 }} variant="outlined" onClick={giveRating}>
+        <Button
+          sx={{ mx: 1, my: 1 }}
+          variant="outlined"
+          onClick={() => setGivingRating(true)}
+        >
           Rate the current conditions
         </Button>
         <Button sx={{ mx: 1, my: 1 }} variant="outlined" href="/upload">
