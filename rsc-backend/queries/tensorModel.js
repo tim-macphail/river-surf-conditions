@@ -49,7 +49,7 @@ const rateCurrent = (req, res) => {
   try {
     const xs = tf.tensor2d([[flow, waterLevel]]);
     const ys = tf.tensor2d([[userRating]]);
-    const err = tf.tensor2d([[userRating]], 980);
+    // const err = tf.tensor2d([[userRating]], 980);
     train(xs, ys);
   } catch (error) {
     console.log("error");

@@ -31,9 +31,11 @@ export default function LiveConditions() {
   const [successMessage, showSuccessMessage] = useState(false);
   const [failureMessage, showFailureMessage] = useState(false);
 
-  const handleRatingClose = (succeeded) => {
-    showSuccessMessage(succeeded);
-    showFailureMessage(!succeeded);
+  const handleRatingClose = (result) => {
+    if (result === "success") showSuccessMessage(true);
+    if (result === "failure") showFailureMessage(true);
+    if (result === "cancel");
+
     setGivingRating(false);
   };
 
