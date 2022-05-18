@@ -7,25 +7,32 @@ const init = async () => {
   model = await tf.loadLayersModel("file://./model-1a/model.json");
   model.compile({ loss: "meanSquaredError", optimizer: "sgd" });
 };
-init();
+// init();
 
 // Generate synthetic data for training
-const xs = tf.tensor2d([
-  [1, 2],
-  [3, 4],
-]);
-const ys = tf.tensor2d([1, 3], [2, 1]);
+const xs = tf.tensor2d([[3, 4]]);
+const ys = tf.tensor2d([3], [1, 1]);
 
 const train = (xs, ys) => {
   // Train the model
   model.fit(xs, ys, { epochs: 1000, verbose: false }).then(() => {
     console.log("Done training");
-    model.save("file://./model-1a");
+    // model.save("file://./model-1a");
   });
 };
 
-const predict = (flow, waterLevel) => {
+const resetModel = () => {
+  model = tf.sequential();
+  model.add(
+    tf.layers.dense({ units: 1, inputShape: 2, activation: "sigmoid" })
+  );
+  model.compile({ loss: "meanSquaredError", optimizer: "sgd" });
   train(xs, ys);
+};
+resetModel();
+
+const predict = (flow, waterLevel) => {
+  // train(xs, ys);
   const output = model.predict(tf.tensor2d([flow, waterLevel], [1, 2]));
   const prediction = Array.from(output.dataSync())[0];
   console.log(prediction);
@@ -45,10 +52,9 @@ const rateCurrent = (req, res) => {
   const { userRating, entries } = req.body;
   const recentEntry = entries[entries.length - 1];
   const [time, waterLevel, flow] = recentEntry;
-  // console.log({ waterLevel: waterLevel, flow: flow, userRating: userRating });
   try {
     const xs = tf.tensor2d([[flow, waterLevel]]);
-    const ys = tf.tensor2d([[userRating]]);
+    const ys = tf.tensor2d([userRating], [1, 1]);
     // const throwAnErr = tf.tensor2d([[userRating]], 980);
     train(xs, ys);
   } catch (error) {
