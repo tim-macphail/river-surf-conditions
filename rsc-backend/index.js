@@ -44,7 +44,8 @@ app.get("/bowRiverData", conditions.getBowRiverData);
 
 app.post("/findNearest", conditions.findNearest);
 app.post("/clearDB", conditions.clearDB);
-app.post("/uploadPhoto", upload.single("image"), conditions.uploadPhoto);
+// app.post("/uploadPhoto", upload.single("image"), conditions.uploadPhoto);
+app.post("/uploadPhoto", conditions.uploadPhoto);
 app.post("/predict", tensorModel.getPrediction);
 app.post("/rateCurrent", tensorModel.rateCurrent);
 
