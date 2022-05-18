@@ -45,12 +45,14 @@ const rateCurrent = (req, res) => {
   const { userRating, entries } = req.body;
   const recentEntry = entries[entries.length - 1];
   const [time, waterLevel, flow] = recentEntry;
-  console.log({ waterLevel: waterLevel, flow: flow });
+  console.log({ waterLevel: waterLevel, flow: flow, userRating: userRating });
   try {
     const xs = tf.tensor2d([[flow, waterLevel]]);
-    const ys = tf.tensor2d([userRating], [1]);
+    const ys = tf.tensor2d([[userRating]]);
+    const err = tf.tensor2d([[userRating]], 980);
     train(xs, ys);
   } catch (error) {
+    console.log("error");
     return res.status(500).send("Error recording rating: " + error);
   }
   return res.status(200).send("Rating recorded successfully");
