@@ -29,6 +29,7 @@ export default function LiveConditions() {
   const [loading, setLoading] = useState(true);
   const [givingRating, setGivingRating] = useState(false);
   const [successMessage, showSuccessMessage] = useState(false);
+
   const [failureMessage, showFailureMessage] = useState(false);
 
   const handleRatingClose = (result) => {

@@ -1,3 +1,5 @@
+import * as normalization from "./normalization";
+
 const tf = require("@tensorflow/tfjs");
 require("@tensorflow/tfjs-node");
 
@@ -22,7 +24,7 @@ const predict = (flow, waterLevel) => {
 
 function main() {
   model = tf.sequential();
-  model.add(tf.layers.dense({ units: 1, inputShape: 2 }));
+  model.add(tf.layers.dense({ units: 1, inputShape: [2] }));
   model.compile({ optimizer: "sgd", loss: "meanSquaredError" });
 
   train(...trainingValues).then(() => predict(...predictionValues));
