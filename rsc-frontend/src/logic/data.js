@@ -18,7 +18,7 @@ export class RiverDataset {
 
   /** Loads training and test data. */
   // TODO: hardcoded
-  async loadData() {
+  loadData() {
     this.trainFeatures = [
       [90, 1],
       [80, 1],

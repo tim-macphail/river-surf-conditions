@@ -16,47 +16,22 @@ export default function Tens() {
   const [flow, setFlow] = useState();
   const [waterLevel, setWaterLevel] = useState();
   const [prediction, setPrediction] = useState(0);
-  const [status, setStatus] = useState("Waiting...");
-  const [baseStatus, setBaseStatus] = useState("(Baseline Status) Waiting...");
-  const [modelStatus, setModelStatus] = useState("(Model Status )Waiting...");
+  const [status, setStatus] = useState("loading...");
+  const [modelStatus, setModelStatus] = useState("(Model Status )loading...");
   const [loaded, setLoaded] = useState(0);
   const [model, setModel] = useState(null);
 
-  const handleClick = () => {
-    const reqBody = {
-      flow: parseFloat(flow),
-      waterLevel: parseFloat(waterLevel),
-    };
-    axios.post("/predict", reqBody).then((response) => {
-      const { prediction } = response.data;
-      setPrediction(prediction);
-    });
-  };
-
   useEffect(() => {
     const setup = async () => {
-      await riverData.loadData();
-      setStatus("Data loaded, converting to tensors");
+      riverData.loadData();
       arraysToTensors();
-      setStatus(
-        "Data is now available as tensors.\n" + "Click a train button to begin."
-      );
-      // TODO Explain what baseline loss is. How it is being computed in this
-      // Instance
-      setBaseStatus("Estimating baseline loss");
-      computeBaseline();
-
       const model = multiLayerPerceptronRegressionModel2Hidden();
       setModel(model);
 
-      await run(model, "linear");
+      await run(model);
     };
     setup();
   }, []);
-
-  /**
-   * Begin TFJS example
-   */
 
   // Some hyperparameters for model training.
   const NUM_EPOCHS = 20;
@@ -115,7 +90,6 @@ export default function Tens() {
     );
     model.add(tf.layers.dense({ units: 1 }));
 
-    // model.summary();
     return model;
   }
 
@@ -124,19 +98,16 @@ export default function Tens() {
    * test data. Issues a callback to update the UI after each epcoh.
    *
    * @param {tf.Sequential} model Model to be trained.
-   * @param {boolean} weightsIllustration Whether to print info about the learned
-   *  weights.
    */
-  async function run(model, modelName) {
+  async function run(model) {
     model.compile({
       optimizer: tf.train.sgd(LEARNING_RATE),
       loss: "meanSquaredError",
     });
 
     let trainLogs = [];
-    // const container = document.querySelector(`#${modelName} .chart`);
 
-    setStatus("Starting training process...");
+    setStatus("Training...");
     await model.fit(tensors.trainFeatures, tensors.trainTarget, {
       batchSize: BATCH_SIZE,
       epochs: NUM_EPOCHS,
@@ -145,12 +116,10 @@ export default function Tens() {
       callbacks: {
         onEpochEnd: async (epoch, logs) => {
           await setModelStatus(
-            `Epoch ${epoch + 1} of ${NUM_EPOCHS} completed.`,
-            modelName
+            `Epoch ${epoch + 1} of ${NUM_EPOCHS} completed.`
           );
           trainLogs.push(logs);
           setLoaded(epoch + 1);
-          // tfvis.show.history(container, trainLogs, ["loss", "val_loss"]);
         },
       },
     });
@@ -158,21 +127,10 @@ export default function Tens() {
     setStatus("Done!");
   }
 
-  function computeBaseline() {
-    const avgPrice = tensors.trainTarget.mean();
-    const baseline = tensors.testTarget.sub(avgPrice).square().mean();
-    const baselineMsg = `Baseline loss (meanSquaredError) is ${baseline
-      .dataSync()[0]
-      .toFixed(2)}`;
-    setBaseStatus(baselineMsg);
-  }
-
   function makePrediction() {
     const output = model.predict(tf.tensor2d([[flow, waterLevel]]));
     const prediction = Array.from(output.dataSync())[0];
     setPrediction(prediction);
-    const status = `Prediction: ${prediction.toFixed(2)}`;
-    setStatus(status);
   }
 
   /**
@@ -185,7 +143,6 @@ export default function Tens() {
         <LinearProgress variant="determinate" value={(loaded * 100) / 20} />
       </Box>
       <Typography>{status}</Typography>
-      <Typography>{baseStatus}</Typography>
       <Typography>{modelStatus}</Typography>
       <Typography variant="h3">Predict Rating</Typography>
       <TextField
