@@ -1,14 +1,20 @@
+const trainData = [
+  [90, 1, 5],
+  [60, 2, 5],
+  [80, 1, 4],
+  [70, 1, 3],
+  [10, 7, 1],
+];
+
 /** Helper class to handle loading training and test data. */
 export class RiverDataset {
   constructor() {
     // Arrays to hold the data.
-    this.trainFeatures = null;
-    this.trainTarget = null;
-    this.testFeatures = null;
-    this.testTarget = null;
+    this.trainFeatures = [];
+    this.trainTarget = [];
   }
 
-  get numFeatures() {
+  static get numFeatures() {
     // If numFetures is accessed before the data is loaded, raise an error.
     if (this.trainFeatures == null) {
       throw new Error("'loadData()' must be called before numFeatures");
@@ -27,24 +33,18 @@ export class RiverDataset {
       [50, 1],
     ];
     this.trainTarget = [[5], [4], [3], [2], [1]];
-    this.testFeatures = [
-      // [91, 1],
-      // [81, 1],
-      // [71, 1],
-      // [61, 1],
-      [51, 1],
-    ];
-    this.testTarget = [
-      // [50],
-      // [40],
-      // [30],
-      // [20],
-      [10],
-    ];
 
-    shuffle(this.trainFeatures, this.trainTarget);
-    shuffle(this.testFeatures, this.testTarget);
+    // shuffle(this.trainFeatures, this.trainTarget);
   }
+
+  //   loadData() {
+  //     trainData.forEach(([flow, waterLevel, prediction]) => {
+  //       this.trainFeatures.push([flow, waterLevel]);
+  //       this.trainTarget.push([prediction]);
+  //     });
+
+  //     shuffle(this.trainFeatures, this.trainTarget);
+  //   }
 }
 
 export const featureDescriptions = ["flow", "water level"];

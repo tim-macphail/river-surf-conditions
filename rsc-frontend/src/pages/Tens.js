@@ -3,10 +3,10 @@ import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import * as tf from "@tensorflow/tfjs";
-// import * as tfvis from "@tensorflow/tfjs-vis";
 
 import { RiverDataset, featureDescriptions } from "../logic/data";
 import * as normalization from "../logic/normalization";
+import * as models from "../logic/models";
 
 /**
  * Used for testing my Tensorflow model
@@ -25,7 +25,7 @@ export default function Tens() {
     const setup = async () => {
       riverData.loadData();
       arraysToTensors();
-      const model = multiLayerPerceptronRegressionModel2Hidden();
+      const model = models.linearRegressionModel();
       setModel(model);
 
       await run(model);
@@ -34,8 +34,8 @@ export default function Tens() {
   }, []);
 
   // Some hyperparameters for model training.
-  const NUM_EPOCHS = 20;
-  const BATCH_SIZE = 40;
+  const NUM_EPOCHS = 1;
+  const BATCH_SIZE = 1;
   const LEARNING_RATE = 0.01;
 
   const riverData = new RiverDataset();
@@ -46,20 +46,16 @@ export default function Tens() {
   function arraysToTensors() {
     tensors.rawTrainFeatures = tf.tensor2d(riverData.trainFeatures);
     tensors.trainTarget = tf.tensor2d(riverData.trainTarget);
-    tensors.rawTestFeatures = tf.tensor2d(riverData.testFeatures);
-    tensors.testTarget = tf.tensor2d(riverData.testTarget);
     // Normalize mean and standard deviation of data.
     let { dataMean, dataStd } = normalization.determineMeanAndStddev(
       tensors.rawTrainFeatures
     );
+    // console.log(Array.from(dataMean.dataSync())[0]);
+    console.log(Array.from(tensors.rawTrainFeatures.dataSync()));
+    // console.log(Array.from(dataStd.dataSync())[0]);
 
     tensors.trainFeatures = normalization.normalizeTensor(
       tensors.rawTrainFeatures,
-      dataMean,
-      dataStd
-    );
-    tensors.testFeatures = normalization.normalizeTensor(
-      tensors.rawTestFeatures,
       dataMean,
       dataStd
     );
@@ -114,10 +110,8 @@ export default function Tens() {
       validationSplit: 0.2,
       verbose: true,
       callbacks: {
-        onEpochEnd: async (epoch, logs) => {
-          await setModelStatus(
-            `Epoch ${epoch + 1} of ${NUM_EPOCHS} completed.`
-          );
+        onEpochEnd: (epoch, logs) => {
+          setModelStatus(`Epoch ${epoch + 1} of ${NUM_EPOCHS} completed.`);
           trainLogs.push(logs);
           setLoaded(epoch + 1);
         },
@@ -133,14 +127,13 @@ export default function Tens() {
     setPrediction(prediction);
   }
 
-  /**
-   * End TFJS example
-   */
-
   return (
     <>
       <Box sx={{ width: "100%" }}>
-        <LinearProgress variant="determinate" value={(loaded * 100) / 20} />
+        <LinearProgress
+          variant="determinate"
+          value={(loaded * 100) / NUM_EPOCHS}
+        />
       </Box>
       <Typography>{status}</Typography>
       <Typography>{modelStatus}</Typography>
@@ -159,7 +152,7 @@ export default function Tens() {
       <Button
         variant="contained"
         onClick={makePrediction}
-        disabled={loaded !== 20}
+        disabled={loaded !== NUM_EPOCHS}
       >
         Predict
       </Button>
