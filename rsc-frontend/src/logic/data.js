@@ -1,11 +1,3 @@
-const trainData = [
-  [90, 1, 5],
-  [60, 2, 5],
-  [80, 1, 4],
-  [70, 1, 3],
-  [10, 7, 1],
-];
-
 /** Helper class to handle loading training and test data. */
 export class RiverDataset {
   constructor() {
@@ -34,17 +26,8 @@ export class RiverDataset {
     ];
     this.trainTarget = [[5], [4], [3], [2], [1]];
 
-    // shuffle(this.trainFeatures, this.trainTarget);
+    shuffle(this.trainFeatures, this.trainTarget);
   }
-
-  //   loadData() {
-  //     trainData.forEach(([flow, waterLevel, prediction]) => {
-  //       this.trainFeatures.push([flow, waterLevel]);
-  //       this.trainTarget.push([prediction]);
-  //     });
-
-  //     shuffle(this.trainFeatures, this.trainTarget);
-  //   }
 }
 
 export const featureDescriptions = ["flow", "water level"];

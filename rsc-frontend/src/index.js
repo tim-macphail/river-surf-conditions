@@ -1,39 +1,38 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import LiveConditions from "./pages/HomePage";
+import HomePage from "./pages/HomePage";
 import UploadPage from "./pages/UploadPage";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import Tens from "./pages/Tens";
 import PhotosPage from "./pages/PhotosPage";
+import Chart from "./pages/3d-chart";
 import TopBar from "./components/TopBar";
 import { Box, CssBaseline } from "@mui/material";
+import { uniformStyle } from './styles/styles';
+
+const pages = [
+  { path: "/", component: <HomePage /> },
+  { path: "/upload", component: <UploadPage /> },
+  { path: "/tens", component: <Tens /> },
+  { path: "/photos", component: <PhotosPage /> },
+  { path: "/chart", component: <Chart /> },
+];
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Router>
-    {/* <CssBaseline /> */}
-    <TopBar />
-    {/* <h1 style={{ position: "absolute" }}>INside the router</h1> */}
+    <CssBaseline />
     <Box
-      sx={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        textAlign: "center",
-        p: 4,
-        backgroundColor: "#282c34",
-        color: "white",
-      }}
+      sx={uniformStyle}
     >
       <Routes>
-        <Route path="/" element={<LiveConditions />} />
-        <Route path="/upload" element={<UploadPage />} />
-        <Route path="/tens" element={<Tens />} />
-        <Route path="/photos" element={<PhotosPage />} />
+        {
+          pages.map(page => (
+            <Route path={page.path} element={page.component} />
+          ))
+        }
       </Routes>
     </Box>
   </Router>

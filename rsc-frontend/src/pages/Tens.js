@@ -1,12 +1,12 @@
-import { TextField, Button, Typography, LinearProgress } from "@mui/material";
+import { Button, LinearProgress, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import { useEffect, useState } from "react";
-import axios from "axios";
 import * as tf from "@tensorflow/tfjs";
+import * as tfvis from "@tensorflow/tfjs-vis";
+import { useEffect, useState } from "react";
 
-import { RiverDataset, featureDescriptions } from "../logic/data";
-import * as normalization from "../logic/normalization";
+import { RiverDataset } from "../logic/data";
 import * as models from "../logic/models";
+import * as normalization from "../logic/normalization";
 
 /**
  * Used for testing my Tensorflow model
@@ -21,6 +21,12 @@ export default function Tens() {
   const [loaded, setLoaded] = useState(0);
   const [model, setModel] = useState(null);
 
+  const surface = tfvis.visor().surface({
+    name: "My surface",
+    tab: "Input"
+  })
+
+
   useEffect(() => {
     const setup = async () => {
       riverData.loadData();
@@ -34,7 +40,7 @@ export default function Tens() {
   }, []);
 
   // Some hyperparameters for model training.
-  const NUM_EPOCHS = 1;
+  const NUM_EPOCHS = 20;
   const BATCH_SIZE = 1;
   const LEARNING_RATE = 0.01;
 
@@ -50,9 +56,7 @@ export default function Tens() {
     let { dataMean, dataStd } = normalization.determineMeanAndStddev(
       tensors.rawTrainFeatures
     );
-    // console.log(Array.from(dataMean.dataSync())[0]);
     console.log(Array.from(tensors.rawTrainFeatures.dataSync()));
-    // console.log(Array.from(dataStd.dataSync())[0]);
 
     tensors.trainFeatures = normalization.normalizeTensor(
       tensors.rawTrainFeatures,
@@ -119,6 +123,7 @@ export default function Tens() {
     });
 
     setStatus("Done!");
+    console.log(trainLogs)
   }
 
   function makePrediction() {

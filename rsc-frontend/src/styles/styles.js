@@ -6,7 +6,9 @@ const uniformStyle = {
   justifyContent: "center",
   textAlign: "center",
   p: 4,
-};
+  backgroundColor: "#282c34",
+  color: "white",
+}
 
 const lightStyle = {
   ...uniformStyle,
@@ -23,4 +25,5 @@ const darkStyle = {
 module.exports = {
   lightStyle,
   darkStyle,
+  uniformStyle,
 };
