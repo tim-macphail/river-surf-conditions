@@ -2,3 +2,4 @@
 **/**/*
 # except build
 !build
+!build/**/*
