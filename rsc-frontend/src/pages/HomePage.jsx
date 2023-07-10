@@ -25,7 +25,7 @@ export default function LiveConditions() {
     waterLevel: 0,
     flow: 0,
   });
-  const [rating, setRating] = useState(4.3);
+  const [rating, setRating] = useState(0);
   const [loading, setLoading] = useState(true);
   const [givingRating, setGivingRating] = useState(false);
   const [successMessage, showSuccessMessage] = useState(false);
@@ -45,7 +45,6 @@ export default function LiveConditions() {
       const response = await axios.get(
         "https://rivers.alberta.ca/apps/Basins/data/figures/river/abrivers/stationdata/R_HG_05BH004_table.json"
       );
-      console.log(response.data[0]);
       const entries = response.data[0].data;
       setEntries(entries);
       const recentEntry = entries[entries.length - 1];

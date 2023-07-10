@@ -34,9 +34,7 @@ export default function UploadPage() {
 
   const getRiverData = async () => {
     try {
-      const response = await axios.get(
-        "https://river-surf-conditions.herokuapp.com/bowRiverData"
-      );
+      const response = await axios.get("/bowRiverData");
       const { entries } = response.data;
       return entries;
     } catch (error) {
@@ -62,10 +60,7 @@ export default function UploadPage() {
       dateStr: dateStr,
     };
     try {
-      const response = await axios.post(
-        "https://river-surf-conditions.herokuapp.com/findNearest",
-        reqBody
-      );
+      const response = await axios.post("/findNearest", reqBody);
       const [time, waterLevel, flow] = response.data.closestEntry;
 
       setClosestEntry({
@@ -86,10 +81,7 @@ export default function UploadPage() {
     fd.append("userRating", userRating);
     try {
       setUploading(true);
-      await axios.post(
-        "https://river-surf-conditions.herokuapp.com/uploadPhoto",
-        fd
-      );
+      await axios.post("/uploadPhoto", fd);
       setSelectedFile(null);
       setUserRating(0);
       setToastOpen(true);
