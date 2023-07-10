@@ -43,10 +43,10 @@ export default function LiveConditions() {
     setLoading(true);
     try {
       const response = await axios.get(
-        "https://river-surf-conditions.herokuapp.com/bowRiverData"
-        // "/bowRiverData"
+        "https://rivers.alberta.ca/apps/Basins/data/figures/river/abrivers/stationdata/R_HG_05BH004_table.json"
       );
-      const { entries } = response.data;
+      console.log(response.data[0]);
+      const entries = response.data[0].data;
       setEntries(entries);
       const recentEntry = entries[entries.length - 1];
       const [unparsedTime, waterLevel, flow] = recentEntry;
