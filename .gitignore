@@ -3,6 +3,7 @@
 # dependencies
 /rsc-frontend/node_modules
 /rsc-backend/node_modules
+rsc-frontend/build
 **/node_modules
 /.pnp
 .pnp.js
