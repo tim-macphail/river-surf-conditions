@@ -1,7 +1,11 @@
 import { TextField, Button, Typography } from "@mui/material";
-import { Box } from "@mui/system";
 import { useState } from "react";
-import axios from "axios";
+import {
+  normalizeData,
+  predictQuality,
+  trainModel,
+  trainingData,
+} from "../logic/utils";
 
 /**
  * Used for testing my Tensorflow model
@@ -12,15 +16,20 @@ export default function Tens() {
   const [waterLevel, setWaterLevel] = useState();
   const [prediction, setPrediction] = useState(0);
 
-  const handleClick = () => {
-    const reqBody = {
-      flow: parseFloat(flow),
-      waterLevel: parseFloat(waterLevel),
-    };
-    axios.post("/predict", reqBody).then((response) => {
-      const { prediction } = response.data;
-      setPrediction(prediction);
-    });
+  const handleClick = async () => {
+    // Normalize the training data
+    const normalizedTrainingData = normalizeData(trainingData);
+
+    // Train the model
+    const model = await trainModel(normalizedTrainingData);
+
+    // Make a prediction
+    const prediction = predictQuality(
+      model,
+      parseFloat(flow),
+      parseFloat(waterLevel)
+    );
+    setPrediction(prediction);
   };
 
   return (

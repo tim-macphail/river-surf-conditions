@@ -12,6 +12,12 @@ import { Refresh } from "@mui/icons-material";
 import RatingDialogue from "../components/RatingDialogue";
 import SuccessSnack from "../components/SuccessSnack";
 import axios from "axios";
+import {
+  normalizeData,
+  predictQuality,
+  trainModel,
+  trainingData,
+} from "../logic/utils";
 
 /**
  * Home page of the website
@@ -66,16 +72,18 @@ export default function LiveConditions() {
 
   const getRating = async (recentEntry) => {
     const [time, waterLevel, flow] = recentEntry;
-    const reqBody = {
-      flow: parseFloat(flow),
-      waterLevel: parseFloat(waterLevel),
-    };
-    try {
-      const response = await axios.post("/predict", reqBody);
-      setRating(response.data.prediction);
-    } catch (error) {
-      console.log(error);
-    }
+    const normalizedTrainingData = normalizeData(trainingData);
+
+    // Train the model
+    const model = await trainModel(normalizedTrainingData);
+
+    // Make a prediction
+    const prediction = predictQuality(
+      model,
+      parseFloat(flow),
+      parseFloat(waterLevel)
+    );
+    setRating(prediction);
   };
 
   useEffect(() => {

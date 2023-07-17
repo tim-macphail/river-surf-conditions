@@ -1,4 +1,10 @@
 import { sequential, layers, tensor2d } from "@tensorflow/tfjs";
+export const flowRateMin = 50;
+export const flowRateMax = 250;
+export const waterLevelMin = 0.5;
+export const waterLevelMax = 2;
+export const ratingMin = 1;
+export const ratingMax = 5;
 
 /**
  * Converts a Date object into a string usable by an
@@ -17,7 +23,7 @@ export const stringify = (date) => {
 };
 
 // Define the training data
-const trainingData = [
+export const trainingData = [
   {
     flowRate: 177,
     waterLevel: 1.5,
@@ -41,14 +47,7 @@ const trainingData = [
 ];
 
 // Normalize the training data
-function normalizeData(data) {
-  const flowRateMin = 50;
-  const flowRateMax = 250;
-  const waterLevelMin = 0.5;
-  const waterLevelMax = 2;
-  const ratingMin = 1;
-  const ratingMax = 5;
-
+export function normalizeData(data) {
   return data.map((item) => ({
     flowRate: (item.flowRate - flowRateMin) / (flowRateMax - flowRateMin),
     waterLevel:
@@ -58,7 +57,7 @@ function normalizeData(data) {
 }
 
 // Denormalize the prediction
-function denormalizePrediction(prediction) {
+export function denormalizePrediction(prediction) {
   const ratingMin = 1;
   const ratingMax = 5;
 
@@ -66,7 +65,7 @@ function denormalizePrediction(prediction) {
 }
 
 // Create and train the model
-async function trainModel(data) {
+export async function trainModel(data) {
   const model = sequential();
   model.add(layers.dense({ units: 8, inputShape: [2], activation: "relu" }));
   model.add(layers.dense({ units: 1, activation: "sigmoid" }));
@@ -81,12 +80,7 @@ async function trainModel(data) {
 }
 
 // Normalize input data and make a prediction
-function predictQuality(model, flowRate, waterLevel) {
-  const flowRateMin = 50;
-  const flowRateMax = 250;
-  const waterLevelMin = 0.5;
-  const waterLevelMax = 2;
-
+export function predictQuality(model, flowRate, waterLevel) {
   const normalizedFlowRate =
     (flowRate - flowRateMin) / (flowRateMax - flowRateMin);
   const normalizedWaterLevel =
@@ -100,7 +94,7 @@ function predictQuality(model, flowRate, waterLevel) {
 }
 
 // Update the model with additional training data
-async function updateModel(model, flowRate, waterLevel, rating) {
+export async function updateModel(model, flowRate, waterLevel, rating) {
   const normalizedFlowRate = (flowRate - 50) / (250 - 50);
   const normalizedWaterLevel = (waterLevel - 0.5) / (2 - 0.5);
   const normalizedRating = (rating - 1) / (5 - 1);
@@ -112,30 +106,3 @@ async function updateModel(model, flowRate, waterLevel, rating) {
 
   return model;
 }
-
-// Normalize the training data
-const normalizedTrainingData = normalizeData(trainingData);
-
-// Train the model
-const model = await trainModel(normalizedTrainingData);
-
-// Make a prediction
-const flowRate = 120;
-const waterLevel = 1.2;
-const prediction = predictQuality(model, flowRate, waterLevel);
-console.log("Prediction:", prediction);
-
-// Update the model
-const updatedFlowRate = 80;
-const updatedWaterLevel = 1.8;
-const updatedRating = 3.5;
-const updatedModel = await updateModel(
-  model,
-  updatedFlowRate,
-  updatedWaterLevel,
-  updatedRating
-);
-
-// Make a prediction using the updated model
-const updatedPrediction = predictQuality(updatedModel, flowRate, waterLevel);
-console.log("Updated Prediction:", updatedPrediction);
